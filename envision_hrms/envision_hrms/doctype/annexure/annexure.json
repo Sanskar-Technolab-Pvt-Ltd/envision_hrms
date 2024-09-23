@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-06 15:35:26.828611",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "grade",
+  "category",
+  "column_break_f3z6",
+  "amount",
+  "annexure_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "grade",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Grade",
+   "options": "Employee Grade",
+   "reqd": 1
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Category",
+   "options": "Classification of Cities",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_f3z6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "annexure_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Annexure Type",
+   "options": "\nCompany\nSelf",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-09-23 17:29:25.197915",
+ "modified_by": "Administrator",
+ "module": "Envision HRMS",
+ "name": "Annexure",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
