@@ -245,5 +245,5 @@ doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Attendance Request
 
 fixtures = [
     {"dt":"Web Form", "filters":[["name", "in", ["job-application"]]]},
-    {"dt":"Custom Field", "filters":[["module", "in", ["envision"]]]}
+    {"dt":"Custom Field", "filters":[["module", "in", ["Envision HRMS"]]]}
 ]
