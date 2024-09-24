@@ -44,7 +44,7 @@ app_license = "mit"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Attendance Request" : "public/js/attendance_request.js"}
+doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Company" : "public/js/company_code.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -245,5 +245,6 @@ doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Attendance Request
 
 fixtures = [
     {"dt":"Web Form", "filters":[["name", "in", ["job-application"]]]},
-    {"dt":"Custom Field", "filters":[["module", "in", ["Envision HRMS"]]]}
+    {"dt":"Custom Field", "filters":[["module", "in", ["Envision HRMS"]]]},
+    {"dt":"Server Script", "filters":[["module", "in", ["Envision HRMS"]]]}
 ]
