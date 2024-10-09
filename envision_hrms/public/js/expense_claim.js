@@ -1,13 +1,4 @@
 frappe.ui.form.on('Expense Claim', {
-    // onload: function(frm) {
-    //     // Initially show the expenses table (if needed)
-    //     frm.toggle_display('expenses', true);
-    // },
-
-    // custom_grade: function(frm) {
-    //     // Trigger the validation for all rows in the child table when the grade is changed
-    //     validate_all_expense_details(frm);
-    // },
     validate: function(frm) {
         // Check if the approval status is 'Approved'
         if (frm.doc.approval_status === 'Approved') {
@@ -20,29 +11,27 @@ frappe.ui.form.on('Expense Claim', {
                 frappe.validated = false; // Prevent form submission
             }
         }
-    }
+    },
+    before_save: async function(frm) {
+        if (frm.doc.company) {
+            let company_limit = await frappe.db.get_value("Company", frm.doc.company, 'custom_validate_limit');
+            if (company_limit.message && company_limit.message.custom_validate_limit == 1) {
+                // console.log("Maximum Limit Validate");
     
+                let max_limit_res = await frappe.db.get_value("Company", frm.doc.company, 'custom_maximum_limit_');
+                let max_limit = max_limit_res.message.custom_maximum_limit_;
     
-    // custom_annexure_type: function(frm) {
-    //     // Trigger the validation for all rows in the child table when the annexure type is changed
-    //     validate_all_expense_details(frm);
-    // }
+                if (frm.doc.total_claimed_amount > max_limit) {
+                    frappe.throw({
+                        title: __("Amount Validation"), // Custom error title
+                        message: __("Maximum expense claim limit is <b>{0}</b>. Please raise another request for remaining amount", [max_limit])
+                    });
+                    frappe.validated = false; // Prevent form save
+                }
+            }
+        }
+    }    
 });
-
-// frappe.ui.form.on('Expense Claim Detail', {
-//     amount: function(frm, cdt, cdn) {
-//         validate_expense_detail(frm, cdt, cdn);
-//     },
-
-//     expense_type: function(frm, cdt, cdn) {
-//         validate_expense_detail(frm, cdt, cdn);
-//     },
-
-//     custom_category: function(frm, cdt, cdn) {
-//         validate_expense_detail(frm, cdt, cdn);
-//     }
-// });
-// Function to hide <hr> tags inside the modal
 let loggedErrors = new Set(); // Reset this in the approval_status function
 function validate_expense_detail(frm, cdt, cdn, totalAmount) {
     let row = locals[cdt][cdn];
@@ -50,8 +39,9 @@ function validate_expense_detail(frm, cdt, cdn, totalAmount) {
     let expense_type = row.expense_type;
     let custom_grade = frm.doc.custom_grade;
     let custom_annexure_type = frm.doc.custom_annexure_type;
+    let limit_expenses = row.limit_expenses
 
-    if (custom_grade && custom_annexure_type && custom_category && expense_type) {
+    if (limit_expenses) {
         // Fetch all records from the 'Expense Claim Type' doctype
         return frappe.call({
             method: 'frappe.client.get_list',
@@ -96,7 +86,7 @@ function validate_expense_detail(frm, cdt, cdn, totalAmount) {
                                                     })
                                                     .filter(rowNumber => rowNumber !== null);
 
-                                                frappe.msgprint(__('<b>Row: {2}</b>, Expense Type: {3}, Category: {4} for applied Total amount is {0} but Maximum allowed is {1}.',
+                                                frappe.msgprint(__('<b>Row: {2}</b>, Expense Type: {3}, Category: {4}. The requested total amount is {0} but Maximum allowed is {1}.',
                                                     [totalAmount, annexure_row.amount, matchingRows.join(', '), expense_type, custom_category]));
 
                                                 frm.doc.expenses.forEach(function(otherRow) {
@@ -120,7 +110,7 @@ function validate_expense_detail(frm, cdt, cdn, totalAmount) {
                             let errorKey = `${custom_annexure_type}-${custom_grade}-${custom_category}-${expense_type}`;
                             if (!loggedErrors.has(errorKey)) {
                                 let currentRowNumber = frm.doc.expenses.findIndex(row => row.name === cdn) + 1;
-                                frappe.msgprint(__('<b>Row: {0}</b>, Expense Type: {1}, Category: {2} for amount Not Found.',
+                                frappe.msgprint(__('<b>Row: {0}</b>, Please Set Limit For Expense Type: {1}, Category: {2}',
                                     [currentRowNumber, expense_type, custom_category]));
                                 rowsToReset.push(cdn);
                                 loggedErrors.add(errorKey);

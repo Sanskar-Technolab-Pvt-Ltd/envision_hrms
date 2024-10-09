@@ -246,5 +246,7 @@ doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Company" : "public
 fixtures = [
     {"dt":"Web Form", "filters":[["name", "in", ["job-application"]]]},
     {"dt":"Custom Field", "filters":[["module", "in", ["Envision HRMS"]]]},
-    {"dt":"Server Script", "filters":[["module", "in", ["Envision HRMS"]]]}
+    {"dt":"Server Script", "filters":[["module", "in", ["Envision HRMS"]]]},
+    {"dt":"Property Setter", "filters":[["module", "in", ["Envision HRMS"]]]},
+    "Custom DocPerm"
 ]
