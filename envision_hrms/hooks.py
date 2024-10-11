@@ -150,9 +150,11 @@ doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Company" : "public
 # ---------------
 
 scheduler_events = {
-    "hourly_long": [
-		"hrms.hr.doctype.shift_type.shift_type.process_auto_attendance_for_all_shifts",
-	],
+    "set_attendance_date": {
+        "55 23 * * *": [
+            "envision_hrms.utils.set_attendance_date"
+        ]
+    },
 # 	"all": [
 # 		"envision_hrms.tasks.all"
 # 	],
