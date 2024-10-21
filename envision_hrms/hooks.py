@@ -250,7 +250,6 @@ scheduler_events = {
 
 fixtures = [
     {"dt":"Web Form", "filters":[["name", "in", ["job-application"]]]},
-    {"dt":"Custom Field", "filters":[["module", "in", ["Envision HRMS"]]]},
     {"dt":"Server Script", "filters":[["module", "in", ["Envision HRMS"]]]},
     {"dt":"Property Setter", "filters":[["module", "in", ["Envision HRMS"]]]},
     "Custom DocPerm"
