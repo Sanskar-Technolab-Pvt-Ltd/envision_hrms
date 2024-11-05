@@ -26,7 +26,7 @@ app_license = "mit"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/envision_hrms/css/envision_hrms.css"
-# app_include_js = "/assets/envision_hrms/js/envision_hrms.js"
+app_include_js = "/assets/envision_hrms/js/common.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/envision_hrms/css/envision_hrms.css"
@@ -139,11 +139,9 @@ doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Company" : "public
 # Hook on document methods and events
 
 # doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
+#     "Salary Slip": {
+#         "before_save": "envision_hrms.envision_hrms.custom_py.salary_ot_calculation.ot_calculation"
+#     }
 # }
 
 # Scheduled Tasks
