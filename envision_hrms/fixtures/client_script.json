@@ -1,0 +1,13 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Payment Request",
+  "enabled": 1,
+  "modified": "2024-11-29 18:37:34.218604",
+  "module": "Envision HRMS",
+  "name": "Hide Create Payment Button To Payment Request",
+  "script": "frappe.ui.form.on('Payment Request', {\n\tonload(frm) {\n\t\t if(frm.doc.workflow_state !== \"Approved\"){\n\t\t     frm.remove_custom_button('Create Payment Entry');\n\t\t }\n\t}\n});",
+  "view": "Form"
+ }
+]

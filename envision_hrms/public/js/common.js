@@ -26,3 +26,41 @@ function calculate_ot_hours(frm) {
         });
     }
 }
+
+frappe.ui.form.on('Employee', {
+    document_template: function (frm) {
+        if (frm.doc.document_template) {
+            // Fetch the Document Template details
+            frappe.call({
+                method: "frappe.client.get",
+                args: {
+                    doctype: "Employee Document Template",
+                    name: frm.doc.document_template
+                },
+                callback: function (r) {
+                    if (r.message) {
+                        const document_template = r.message;
+                        console.log(document_template)
+                        const documents = document_template.documents || [];
+
+                        // Clear the existing document_checklist table
+                        frm.clear_table('document_checklist');
+
+                        // Add each document to the checklist table
+                        documents.forEach(doc => {
+                            const row = frm.add_child('document_checklist');
+                            row.document = doc.document; // Update the field name based on your field's actual name
+                        });
+
+                        // Refresh the table
+                        frm.refresh_field('document_checklist');
+                    }
+                }
+            });
+        } else {
+            // Clear the checklist table if no template is selected
+            frm.clear_table('document_checklist');
+            frm.refresh_field('document_checklist');
+        }
+    }
+});

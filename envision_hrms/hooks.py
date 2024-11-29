@@ -249,9 +249,10 @@ scheduler_events = {
 fixtures = [
     {"dt":"Web Form", "filters":[["name", "in", ["job-application"]]]},
     {"dt":"Server Script", "filters":[["module", "in", ["Envision HRMS"]]]},
+    {"dt":"Client Script", "filters":[["module", "in", ["Envision HRMS"]]]},
     {"dt":"Property Setter", "filters":[["module", "in", ["Envision HRMS"]]]},
     {"dt":"Print Format", "filters":[["module", "in", ["Envision HRMS"]]]},
-    {"dt":"Workspace", "filters":[["name", "in", ["Employee Board"]]]},
-    {"dt":"Custom HTML Block", "filters":[["name", "in", ["Upcoming Birthdays"]]]},
+    {"dt":"Workspace", "filters":[["name", "in", ["Employee Board","Employee Lifecycle"]]]},
+    {"dt":"Custom HTML Block", "filters":[["name", "in", ["Upcoming Birthdays",""]]]},
     "Custom DocPerm"
 ]
