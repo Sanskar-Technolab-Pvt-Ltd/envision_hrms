@@ -2,7 +2,7 @@ import frappe
 from frappe import _
 from frappe.utils import cint, get_datetime
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def add_log_based_on_employee_field(
 	employee_field_value,
 	timestamp,
@@ -48,5 +48,6 @@ def add_log_based_on_employee_field(
 	if cint(skip_auto_attendance) == 1:
 		doc.skip_auto_attendance = "1"
 	doc.insert()
+	frappe.db.commit()
 
 	return doc
