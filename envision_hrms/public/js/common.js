@@ -16,9 +16,7 @@ function calculate_ot_hours(frm) {
             callback: function(r) {
                 if (r.message) {
                     frm.set_value("custom_ot_hours", r.message);
-                    frm.set_value('earnings', []);
                     frm.refresh_field('earnings');
-                    frm.save()
                 } else {
                     frm.set_value("custom_ot_hours", 0);
                 }
@@ -64,3 +62,79 @@ frappe.ui.form.on('Employee', {
         }
     }
 });
+
+frappe.ui.form.on('Retention Bonus', {
+    bonus_wage : function(frm){
+        frm.set_value("bonus_amount",0.00);
+        frm.refresh_field("bonus_amount");
+    },
+    bonus_percentage : function(frm){
+        frm.set_value("bonus_amount",0.00);
+        frm.refresh_field("bonus_amount");
+    },
+    get_salary_slip : function(frm) {
+        if (!frm.doc.from_date || !frm.doc.to_date){
+            frappe.msgprint("Please select valid date range")
+        }
+        var yearly_bonus = frm.doc.yearly_bonus;
+        var emp = frm.doc.employee;
+        var from_date = frm.doc.from_date;
+        var to_date = frm.doc.to_date;
+
+        if (yearly_bonus === 1 && emp && from_date && to_date) {
+            frappe.call({
+                method: "envision_hrms.envision_hrms.custom_py.yearly_bonus.get_employee_bonus",
+                args: {
+                    employee: emp,
+                    from_date: from_date,
+                    to_date: to_date
+                },
+                async: false,
+                callback: function (response) {
+                    console.log(response.message);
+                    if (response.message){
+                        frm.clear_table("employee_bonus");
+
+                        var salary_slips = response.message[0];
+                        var get_salary_data = response.message[1];
+                        var totalBonus = 0;
+                        var totalAmount = 0.0;
+
+                        for (var i = 0; i < salary_slips.length; i++) {
+                            var row = frm.add_child("employee_bonus");
+                            row.salary_slip = salary_slips[i].name;
+                            row.basic_salary = salary_slips[i].base_gross_pay - get_salary_data[i].amount;
+                            
+                            var amount = salary_slips[i].base_gross_pay - get_salary_data[i].amount;
+                            totalAmount += amount
+                        }
+
+                        frm.refresh_field("employee_bonus");
+                        // frm.set_value("salary_component", "Bonus");
+                        totalAmount = parseFloat(totalAmount.toFixed(0));
+                        frm.set_value("bonus_wage", totalAmount);
+                        frm.refresh_field("bonus_wage");
+                    }
+                    else{
+                        frappe.msgprint("No Salary Slips Found between selected Dates")
+                    }
+                }
+            });
+        }
+    },
+    before_save:function(frm){
+        if (frm.doc.yearly_bonus == 1 && frm.doc.bonus_percentage && frm.doc.bonus_wage) {
+            if(frm.doc.bonus_amount == 0.00){
+                var bp = frm.doc.bonus_percentage / 100 ;
+                bp = parseFloat(bp.toFixed(4));
+                console.log(bp)
+                totalBonus = frm.doc.bonus_wage * bp;
+                totalBonus = parseFloat(totalBonus.toFixed(0));
+                console.log(totalBonus)
+                frm.set_value("bonus_amount", totalBonus);
+                frm.refresh_field("bonus_amount");
+            }
+        } 
+    }
+});
+
