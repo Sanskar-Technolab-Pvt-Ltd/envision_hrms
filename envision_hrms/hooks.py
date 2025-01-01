@@ -252,7 +252,7 @@ fixtures = [
     {"dt":"Client Script", "filters":[["module", "in", ["Envision HRMS"]]]},
     {"dt":"Property Setter", "filters":[["module", "in", ["Envision HRMS"]]]},
     {"dt":"Print Format", "filters":[["module", "in", ["Envision HRMS"]]]},
-    {"dt":"Workspace", "filters":[["name", "in", ["Employee Board","Employee Lifecycle"]]]},
+    {"dt":"Workspace", "filters":[["name", "in", ["Employee Board","Employee Lifecycle","System Admin"]]]},
     {"dt":"Custom HTML Block", "filters":[["name", "in", ["Upcoming Birthdays","Work Anniversary"]]]},
     "Custom DocPerm"
 ]
