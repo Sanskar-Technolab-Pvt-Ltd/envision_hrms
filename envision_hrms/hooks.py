@@ -147,12 +147,12 @@ doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Company" : "public
 # Scheduled Tasks
 # ---------------
 
-scheduler_events = {
-    "set_attendance_date": {
-        "55 23 * * *": [
-            "envision_hrms.utils.set_attendance_date"
-        ]
-    },
+# scheduler_events = {
+    # "set_attendance_date": {
+    #     "55 23 * * *": [
+    #         "envision_hrms.utils.set_attendance_date"
+    #     ]
+    # },
 # 	"all": [
 # 		"envision_hrms.tasks.all"
 # 	],
@@ -168,7 +168,7 @@ scheduler_events = {
 # 	"monthly": [
 # 		"envision_hrms.tasks.monthly"
 # 	],
-}
+# }
 
 # Testing
 # -------

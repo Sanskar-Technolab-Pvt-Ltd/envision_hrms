@@ -1,17 +1,17 @@
 frappe.ui.form.on('Expense Claim', {
-    validate: function(frm) {
-        // Check if the approval status is 'Approved'
-        if (frm.doc.approval_status === 'Approved') {
-            // Clear logged errors to ensure fresh validation
-            loggedErrors.clear();
+    // before_submit: function(frm) {
+    //     // Check if the approval status is 'Approved'
+    //     if (frm.doc.approval_status === 'Approved') {
+    //         // Clear logged errors to ensure fresh validation
+    //         loggedErrors.clear();
     
-            // Trigger the validation for all rows in the child table
-            let hasErrors = validate_all_expense_details(frm);
-            if (hasErrors) {
-                frappe.validated = false; // Prevent form submission
-            }
-        }
-    },
+    //         // Trigger the validation for all rows in the child table
+    //         let hasErrors = validate_all_expense_details(frm);
+    //         if (hasErrors) {
+    //             frappe.validated = false; // Prevent form submission
+    //         }
+    //     }
+    // },
     before_save: async function(frm) {
         if (frm.doc.company) {
             let company_limit = await frappe.db.get_value("Company", frm.doc.company, 'custom_validate_limit');
