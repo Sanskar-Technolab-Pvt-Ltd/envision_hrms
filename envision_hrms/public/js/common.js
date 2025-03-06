@@ -138,3 +138,16 @@ frappe.ui.form.on('Retention Bonus', {
     }
 });
 
+frappe.ui.form.on('Attendance Request', {
+	before_save(frm) {
+		if(frm.doc.reason == "Early Going" || frm.doc.reason == "Late Coming"){
+            if(frm.doc.from_date !== frm.doc.to_date){
+                frappe.throw({
+                    title: __('Validation'),
+                    message: __('From Date and To Date must be the same for Early Going/Late Going'),
+                    indicator: 'orange'
+                });
+            }
+        }
+	}
+})
