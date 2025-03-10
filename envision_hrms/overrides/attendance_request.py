@@ -72,7 +72,7 @@ class AttendanceRequest(Document):
 		request_days = date_diff(self.to_date, self.from_date) + 1
 		for day in range(request_days):
 			attendance_date = add_days(self.from_date, day)
-			if self.reason == "Early Going" or self.reason == "Late Coming":
+			if self.reason in ["Early Going", "Late Coming", "Missed Punch In", "Missed Punch Out"]:
 				create_checkins(self)
 			else :
 				self.should_mark_attendance(attendance_date)
@@ -195,21 +195,23 @@ class AttendanceRequest(Document):
 @frappe.whitelist()
 def create_checkins(self):
     # Create "IN" log
-    checkin_doc = frappe.new_doc("Employee Checkin")
-    checkin_doc.employee = self.employee
-    checkin_doc.log_type = "IN"
-    checkin_doc.time = self.custom_checkin_time
-    checkin_doc.shift = self.shift
-    checkin_doc.custom_attendance_request = self.name
-    checkin_doc.insert(ignore_permissions=True)
-    checkin_doc.save()
+	if self.custom_checkin_time:
+		checkin_doc = frappe.new_doc("Employee Checkin")
+		checkin_doc.employee = self.employee
+		checkin_doc.log_type = "IN"
+		checkin_doc.time = self.custom_checkin_time
+		checkin_doc.shift = self.shift
+		checkin_doc.custom_attendance_request = self.name
+		checkin_doc.insert(ignore_permissions=True)
+		checkin_doc.save()
 
     # Create "OUT" log
-    checkout_doc = frappe.new_doc("Employee Checkin")
-    checkout_doc.employee = self.employee
-    checkout_doc.log_type = "OUT"
-    checkout_doc.time = self.custom_checkout_time
-    checkout_doc.shift = self.shift
-    checkout_doc.custom_attendance_request = self.name
-    checkout_doc.insert(ignore_permissions=True)
-    checkout_doc.save()
+	if self.custom_checkout_time:
+		checkout_doc = frappe.new_doc("Employee Checkin")
+		checkout_doc.employee = self.employee
+		checkout_doc.log_type = "OUT"
+		checkout_doc.time = self.custom_checkout_time
+		checkout_doc.shift = self.shift
+		checkout_doc.custom_attendance_request = self.name
+		checkout_doc.insert(ignore_permissions=True)
+		checkout_doc.save()

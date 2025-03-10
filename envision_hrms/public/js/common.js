@@ -140,7 +140,7 @@ frappe.ui.form.on('Retention Bonus', {
 
 frappe.ui.form.on('Attendance Request', {
 	before_save(frm) {
-		if(frm.doc.reason == "Early Going" || frm.doc.reason == "Late Coming"){
+		if(frm.doc.reason == "Early Going" || frm.doc.reason == "Late Coming" || frm.doc.reason == "Missed Punch In" || frm.doc.reason == "Missed Punch Out"){
             if(frm.doc.from_date !== frm.doc.to_date){
                 frappe.throw({
                     title: __('Validation'),
