@@ -223,11 +223,12 @@ def create_checkins(self):
 @frappe.whitelist()
 def update_attendance_from_checkins(self, attendance_date):
     # Fetch Check-ins for the employee on the attendance date
+	
     checkins = frappe.get_all(
         "Employee Checkin",
         filters={
             "employee": self.employee,
-            "time": ["between", [attendance_date + " 00:00:00", attendance_date + " 23:59:59"]]
+            "time": ["between", [str(attendance_date) + " 00:00:00", str(attendance_date) + " 23:59:59"]]
         },
         fields=["name", "time", "log_type"],
         order_by="time asc"
