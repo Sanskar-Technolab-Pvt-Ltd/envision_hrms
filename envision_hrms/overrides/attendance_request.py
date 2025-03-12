@@ -9,7 +9,9 @@ from frappe.utils import add_days, date_diff, format_date, get_link_to_form, get
 
 from erpnext.setup.doctype.employee.employee import is_holiday
 
+import frappe.utils
 from hrms.hr.utils import validate_active_employee, validate_dates
+from hrms.hr.doctype.attendance.attendance import mark_attendance
 
 
 class OverlappingAttendanceRequestError(frappe.ValidationError):
@@ -74,14 +76,17 @@ class AttendanceRequest(Document):
 			attendance_date = add_days(self.from_date, day)
 			if self.reason in ["Early Going", "Late Coming", "Missed Punch In", "Missed Punch Out"]:
 				create_checkins(self)
+				attendance_name = self.get_attendance_record(attendance_date)
+				if self.should_mark_attendance(attendance_date):
+					update_attendance_from_checkins(self, attendance_date)
 			else :
-				self.should_mark_attendance(attendance_date)
-				self.create_or_update_attendance(attendance_date)
+				if self.should_mark_attendance(attendance_date):
+					self.create_or_update_attendance(attendance_date)
 
 	def create_or_update_attendance(self, date: str):
 		attendance_name = self.get_attendance_record(date)
 		status = self.get_attendance_status(date)
-
+		
 		if attendance_name:
 			# update existing attendance, change the status
 			doc = frappe.get_doc("Attendance", attendance_name)
@@ -201,7 +206,6 @@ def create_checkins(self):
 		checkin_doc.log_type = "IN"
 		checkin_doc.time = self.custom_checkin_time
 		checkin_doc.shift = self.shift
-		checkin_doc.custom_attendance_request = self.name
 		checkin_doc.insert(ignore_permissions=True)
 		checkin_doc.save()
 
@@ -212,6 +216,62 @@ def create_checkins(self):
 		checkout_doc.log_type = "OUT"
 		checkout_doc.time = self.custom_checkout_time
 		checkout_doc.shift = self.shift
-		checkout_doc.custom_attendance_request = self.name
 		checkout_doc.insert(ignore_permissions=True)
 		checkout_doc.save()
+
+
+@frappe.whitelist()
+def update_attendance_from_checkins(self, attendance_date):
+    # Fetch Check-ins for the employee on the attendance date
+    checkins = frappe.get_all(
+        "Employee Checkin",
+        filters={
+            "employee": self.employee,
+            "time": ["between", [attendance_date + " 00:00:00", attendance_date + " 23:59:59"]]
+        },
+        fields=["name", "time", "log_type"],
+        order_by="time asc"
+    )
+
+    # Separate IN and OUT logs
+    in_logs = [c for c in checkins if c["log_type"] == "IN"]
+    out_logs = [c for c in checkins if c["log_type"] == "OUT"]
+
+    if in_logs and out_logs:
+        in_time = in_logs[0]["time"]
+        out_time = out_logs[-1]["time"]  # Latest OUT time
+        
+        # Calculate Working Hours
+        working_hours = (frappe.utils.get_datetime(out_time) - frappe.utils.get_datetime(in_time)).total_seconds() / 3600
+        
+        # Get or Create Attendance Record
+        attendance_name = self.get_attendance_record(attendance_date)
+        if attendance_name:
+            attendance = frappe.get_doc("Attendance", attendance_name)
+            attendance.db_set({
+                "in_time": in_time,
+                "out_time": out_time,
+                "working_hours": working_hours,
+                "status": "Present",
+				"late_entry":0,
+				"early_exit":0,
+                "attendance_request": self.name
+            })
+        else:
+            attendance_name = mark_attendance(
+                employee=self.employee,
+                attendance_date=attendance_date,
+                in_time=in_time,
+                out_time=out_time,
+                working_hours=working_hours,
+                attendance_request=self.name
+            )
+
+        # Link Check-ins to the Attendance record
+        for checkin in checkins:
+            frappe.db.set_value("Employee Checkin", checkin["name"], "attendance", attendance_name)
+
+        frappe.msgprint(_("Updated Attendance ID for {} check-in logs.").format(len(checkins)))
+
+    else:
+        frappe.msgprint(_("No valid check-in or check-out records found for the date."))

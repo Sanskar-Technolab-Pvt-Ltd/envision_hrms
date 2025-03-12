@@ -144,10 +144,58 @@ frappe.ui.form.on('Attendance Request', {
             if(frm.doc.from_date !== frm.doc.to_date){
                 frappe.throw({
                     title: __('Validation'),
-                    message: __('From Date and To Date must be the same for Early Going/Late Going'),
+                    message: __('From Date and To Date must be the same for selected reason'),
                     indicator: 'orange'
                 });
             }
         }
-	}
+	},
+    custom_checkin_time(frm) {
+        let from_date = frm.doc.from_date;
+        let checkin_datetime = frm.doc.custom_checkin_time;
+
+        if (from_date && checkin_datetime) {
+            let fromDateObj = new Date(from_date);
+            fromDateObj.setHours(0, 0, 0, 0); // Normalize to midnight
+            
+            let checkinDateObj = new Date(checkin_datetime);
+
+            console.log("From Date:", fromDateObj);
+            console.log("Check-in Date:", checkinDateObj);
+
+            // Extract only the date part
+            let fromDateStr = from_date; // YYYY-MM-DD
+            let checkinDateStr = checkin_datetime.split(' ')[0]; // Extract only the date part
+
+            if (checkinDateStr !== fromDateStr) {
+                frappe.throw(__('Check-in date must match From Date.'));
+                frm.set_value("custom_checkin_time", "");
+                frm.refresh_field("custom_checkin_time");
+            }
+        }
+    },
+    custom_checkout_time(frm) {
+        let from_date = frm.doc.from_date;
+        let checkout_datetime = frm.doc.custom_checkout_time;
+
+        if (from_date && checkout_datetime) {
+            let fromDateObj = new Date(from_date);
+            fromDateObj.setHours(0, 0, 0, 0); // Normalize to midnight
+            
+            let checkoutDateObj = new Date(checkout_datetime);
+
+            console.log("From Date:", fromDateObj);
+            console.log("Check-out Date:", checkoutDateObj);
+
+            // Extract only the date part
+            let fromDateStr = from_date; // YYYY-MM-DD
+            let checkoutDateStr = checkout_datetime.split(' ')[0]; // Extract only the date part
+
+            if (checkoutDateStr !== fromDateStr) {
+                frappe.throw(__('Check-Out date must match From Date.'));
+                frm.set_value("custom_checkout_time", "");
+                frm.refresh_field("custom_checkout_time");
+            }
+        }
+    }
 })
