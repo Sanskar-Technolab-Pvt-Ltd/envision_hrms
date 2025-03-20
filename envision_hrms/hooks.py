@@ -28,6 +28,10 @@ app_license = "mit"
 # app_include_css = "/assets/envision_hrms/css/envision_hrms.css"
 app_include_js = "/assets/envision_hrms/js/common.js"
 
+# Migration
+# ------------
+after_migrate = "envision_hrms.disable_collaps.after_migrate"
+
 # include js, css files in header of web template
 # web_include_css = "/assets/envision_hrms/css/envision_hrms.css"
 # web_include_js = "/assets/envision_hrms/js/envision_hrms.js"
