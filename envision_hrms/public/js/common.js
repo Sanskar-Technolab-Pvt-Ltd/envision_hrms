@@ -60,6 +60,70 @@ frappe.ui.form.on('Employee', {
             frm.clear_table('document_checklist');
             frm.refresh_field('document_checklist');
         }
+    },
+    refresh(frm){
+        frm.set_query('advance_account', function() {
+            if (frm.doc.company) {
+                return {
+                    filters: {
+                        company: frm.doc.company
+                        }
+                    };
+                }
+        });
+    },
+    onload(frm){
+        if (frappe.session.user.has_role("Accounts Manager,HR Manager")) {
+			frm.add_custom_button(__('Update Advance Limit'), function () {
+                let dl = new frappe.ui.Dialog({
+                    title: 'Enter New Limit',
+                    fields: [{
+                        label: 'New Advance Limit',
+                        fieldname: 'new_limit',
+                        fieldtype: 'Currency',
+                        reqd: 1
+                    },
+                    ],
+                    primary_action_label: 'Update',
+                    primary_action(values) {
+                        frappe.db.set_value('Employee', frm.doc.name, {
+                            'advance_limit': values.new_limit,
+                        })
+                        dl.hide();
+                        location.reload();
+                    }
+                });
+                dl.show();
+            })
+		}
+    }
+});
+
+frappe.ui.form.on('Employee Advance', {
+    advance_amount: function(frm) {
+        if (frm.doc.employee && frm.doc.advance_amount) {
+            frappe.call({
+                method: 'frappe.client.get_value',
+                args: {
+                    doctype: 'Employee',
+                    filters: { name: frm.doc.employee },
+                    fieldname: 'advance_limit'
+                },
+                callback: function(r) {
+                    if (r.message && r.message.advance_limit !== undefined) {
+                        let advance_limit = r.message.advance_limit || 0;
+                        if (frm.doc.advance_amount > advance_limit) {
+                            frappe.msgprint({
+                                title: __('Validation Error'),
+                                message: __('Advance amount cannot exceed the advance limit of ₹{0}', [advance_limit]),
+                                indicator: 'red'
+                            });
+                            frm.set_value('advance_amount', '');
+                        }
+                    }
+                }
+            });
+        }
     }
 });
 

@@ -142,11 +142,12 @@ doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Company" : "public
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-#     "Salary Slip": {
-#         "before_save": "envision_hrms.envision_hrms.custom_py.salary_ot_calculation.ot_calculation"
-#     }
-# }
+doc_events = {
+    "Employee Advance": {
+        "on_submit": "envision_hrms.api.deduct_advance_limit",
+        "on_cancel" : "envision_hrms.api.add_advance_limit"
+    }
+}
 
 # Scheduled Tasks
 # ---------------

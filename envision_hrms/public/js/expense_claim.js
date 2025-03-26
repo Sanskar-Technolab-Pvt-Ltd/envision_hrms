@@ -30,8 +30,31 @@ frappe.ui.form.on('Expense Claim', {
                 }
             }
         }
-    }    
+    },
+    refresh: function(frm) {
+        frm.fields_dict['expenses'].grid.get_field('purchase_invoice').get_query = function(doc, cdt, cdn) {
+            let child = locals[cdt][cdn];
+            if (child.is_purchase_invoice_included && frm.doc.company) {
+                return {
+                    filters: {
+                        company: frm.doc.company
+                    }
+                };
+            }
+        };
+    }
 });
+
+frappe.ui.form.on('Expense Claim Detail', {
+    is_purchase_invoice_included: function(frm, cdt, cdn) {
+        let child = locals[cdt][cdn];
+        if (child.is_purchase_invoice_included) {
+            child.sanctioned_amount = 0;
+            frm.fields_dict['expenses'].grid.refresh();
+        }
+    }
+});
+
 let loggedErrors = new Set(); // Reset this in the approval_status function
 function validate_expense_detail(frm, cdt, cdn, totalAmount) {
     let row = locals[cdt][cdn];
@@ -156,3 +179,4 @@ function validate_all_expense_details(frm) {
 
     return hasErrors;
 }
+
