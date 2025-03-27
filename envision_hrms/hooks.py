@@ -146,6 +146,10 @@ doc_events = {
     "Employee Advance": {
         "on_submit": "envision_hrms.api.deduct_advance_limit",
         "on_cancel" : "envision_hrms.api.add_advance_limit"
+    },
+    "Expense Claim": {
+        "on_submit": "envision_hrms.api.deduct_advance_limit_ec",
+        "on_cancel" : "envision_hrms.api.add_advance_limit_ec"
     }
 }
 
