@@ -30,6 +30,9 @@ class AttendanceRequest(Document):
 			if not getdate(self.from_date) <= getdate(self.half_day_date) <= getdate(self.to_date):
 				frappe.throw(_("Half day date should be in between from date and to date"))
 
+	def validate_no_attendance_to_create(self):
+		pass 
+		
 	def validate_request_overlap(self):
 		if not self.name:
 			self.name = "New Attendance Request"
