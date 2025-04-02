@@ -10,3 +10,7 @@ hrms.hr.doctype.attendance_request.attendance_request.AttendanceRequest.create_a
 hrms.hr.doctype.employee_checkin.employee_checkin.add_log_based_on_employee_field = (
     envision_hrms.overrides.employee_checkin.add_log_based_on_employee_field
 )
+hrms.hr.doctype.employee_checkin.employee_checkin.add_header = (
+    envision_hrms.overrides.employee_checkin.add_header
+)
+

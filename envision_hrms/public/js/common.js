@@ -1,5 +1,17 @@
 frappe.ui.form.on('Salary Slip', {
-    refresh: function(frm) {
+    after_save: function(frm) {
+        // Only calculate if values are not set to prevent overwriting
+        if (!frm.doc.custom_ot_hours || !frm.doc.total_public_holidays) {
+            calculate_ot_hours(frm);
+        }
+    },
+    employee: function(frm) {
+        calculate_ot_hours(frm);
+    },
+    start_date: function(frm) {
+        calculate_ot_hours(frm);
+    },
+    end_date: function(frm) {
         calculate_ot_hours(frm);
     }
 });
@@ -15,10 +27,14 @@ function calculate_ot_hours(frm) {
             },
             callback: function(r) {
                 if (r.message) {
-                    frm.set_value("custom_ot_hours", r.message);
-                    frm.refresh_field('earnings');
-                } else {
-                    frm.set_value("custom_ot_hours", 0);
+                    let total_ot_hours = r.message.total_ot_hours || 0;
+                    let total_ph = r.message.total_ph || 0;
+
+                    if (frm.doc.custom_ot_hours !== total_ot_hours || frm.doc.total_public_holidays !== total_ph) {
+                        frm.set_value("custom_ot_hours", total_ot_hours);
+                        frm.set_value("total_public_holidays", total_ph);
+                        frm.save();  // Ensure changes are saved immediately
+                    }
                 }
             }
         });
