@@ -134,9 +134,9 @@ doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Company" : "public
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Attendance Request": "envision_hrms.overrides.attendance_request.AttendanceRequest"
+}
 
 # Document Events
 # ---------------
