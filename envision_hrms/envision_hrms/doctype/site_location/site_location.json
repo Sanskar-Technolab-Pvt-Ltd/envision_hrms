@@ -4,6 +4,7 @@
  "autoname": "field:location_code",
  "creation": "2024-08-23 17:25:18.477340",
  "doctype": "DocType",
+ "document_type": "Other",
  "engine": "InnoDB",
  "field_order": [
   "location_code",
@@ -25,9 +26,10 @@
    "reqd": 1
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-11 13:47:11.791282",
+ "modified": "2025-04-08 14:38:17.851669",
  "modified_by": "Administrator",
  "module": "Envision HRMS",
  "name": "Site Location",
@@ -71,6 +73,7 @@
    "write": 1
   }
  ],
+ "search_fields": "location_name",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

@@ -48,8 +48,11 @@ after_migrate = "envision_hrms.disable_collaps.after_migrate"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-doctype_js = {"Expense Claim" : "public/js/expense_claim.js","Company" : "public/js/company_code.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_js = {"Expense Claim" : "public/js/expense_claim.js",
+              "Company" : "public/js/company_code.js",
+              "Salary Slip":"public/js/salary_slip.js"
+              }
+doctype_list_js = {"Attendance" : "public/js/attendance_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 

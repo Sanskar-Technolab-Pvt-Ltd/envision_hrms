@@ -28,13 +28,13 @@
   "doctype_event": "Before Insert",
   "enable_rate_limit": 0,
   "event_frequency": "All",
-  "modified": "2025-02-25 13:50:10.200082",
+  "modified": "2025-04-02 10:11:27.767042",
   "module": "Envision HRMS",
   "name": "Employee Checkin Set Type IN OUT",
   "rate_limit_count": 5,
   "rate_limit_seconds": 86400,
   "reference_doctype": "Employee Checkin",
-  "script": "# Extract only the date part from the datetime field\ncheckin_date = frappe.utils.getdate(doc.time)  # Returns a date object\n\n# Convert date to string to form a proper datetime range filter\nstart_datetime = str(checkin_date) + \" 00:00:00\"\nend_datetime = str(checkin_date) + \" 23:59:59\"\n\n# Fetch all check-ins for the employee on the same date\nexisting_checkins = frappe.get_all(\n    \"Employee Checkin\",\n    filters={\n        \"employee\": doc.employee,\n        \"time\": [\"between\", [start_datetime, end_datetime]]  # Corrected filter format\n    },\n    order_by=\"time asc\"\n)\n\n# Determine log type based on the count of existing check-ins\ndoc.log_type = \"IN\" if len(existing_checkins) % 2 == 0 else \"OUT\"",
+  "script": " # Extract the date part from the datetime field\ncheckin_date = frappe.utils.getdate(doc.time)  # Returns a date object\n\n# Convert date to string to form a proper datetime range filter\nstart_datetime = str(checkin_date) + \" 00:00:00\"\nend_datetime = str(checkin_date) + \" 23:59:59\"\n\n# Fetch all check-ins for the employee on the same date, sorted by time\nexisting_checkins = frappe.get_all(\n    \"Employee Checkin\",\n    filters={\n        \"employee\": doc.employee,\n        \"time\": [\"between\", [start_datetime, end_datetime]]\n    },\n    fields=[\"name\", \"time\", \"log_type\"],\n    order_by=\"time asc\"\n)\n\n# If it's the first check-in for the day, set as \"IN\", otherwise \"OUT\"\nif len(existing_checkins) == 0:\n    doc.log_type = \"IN\"\nelse:\n    doc.log_type = \"OUT\"\n",
   "script_type": "DocType Event"
  }
 ]
