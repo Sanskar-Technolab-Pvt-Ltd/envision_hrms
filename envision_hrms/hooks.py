@@ -153,6 +153,9 @@ doc_events = {
     "Expense Claim": {
         "on_submit": "envision_hrms.api.deduct_advance_limit_ec",
         "on_cancel" : "envision_hrms.api.add_advance_limit_ec"
+    },
+    "Appointment Letter": {
+        "validate": "envision_hrms.api.calculate_totals"
     }
 }
 

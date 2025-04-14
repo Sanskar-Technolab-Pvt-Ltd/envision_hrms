@@ -51,15 +51,3 @@ def add_log_based_on_employee_field(
 	frappe.db.commit()
 
 	return doc
-
-
-def add_header(w):
-	status = ", ".join((frappe.get_meta("Attendance").get_field("status").options or "").strip().split("\n"))
-	w.writerow(["Notes:"])
-	w.writerow(["Please do not change the template headings"])
-	w.writerow(["Status should be one of these values: " + status + ",Week Off"])
-	w.writerow(["If you are overwriting existing attendance records, 'ID' column mandatory"])
-	w.writerow(
-		["ID", "Employee", "Employee Name", "Date", "Status", "Leave Type", "Company", "Naming Series", "OT Hours", "Public Holiday"]
-	)
-	return w

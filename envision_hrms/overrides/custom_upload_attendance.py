@@ -19,3 +19,15 @@ def custom_validate(self):
 		self.validate_overlapping_shift_attendance()
 		self.validate_employee_status()
 		self.check_leave_record()
+
+
+def add_header(w):
+	status = ", ".join((frappe.get_meta("Attendance").get_field("status").options or "").strip().split("\n"))
+	w.writerow(["Notes:"])
+	w.writerow(["Please do not change the template headings"])
+	w.writerow(["Status should be one of these values: " + status + ",Week Off"])
+	w.writerow(["If you are overwriting existing attendance records, 'ID' column mandatory"])
+	w.writerow(
+		["ID", "Employee", "Employee Name", "Date", "Status", "Leave Type", "Company", "Naming Series", "OT Hours", "Public Holiday"]
+	)
+	return w

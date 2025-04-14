@@ -22,4 +22,17 @@ def add_advance_limit_ec(self, method):
         new_limit = employee_doc.advance_limit - self.total_advance_amount
         frappe.db.set_value("Employee",self.employee,"advance_limit",new_limit)
 
+@frappe.whitelist()
+def calculate_totals(doc, method):
+    total_earnings = 0
+    total_deductions = 0
+
+    for row in doc.earnings:
+        total_earnings += row.amount or 0
+
+    for row in doc.deductions:
+        total_deductions += row.amount or 0
+
+    doc.total_earnings = total_earnings
+    doc.total_deductions = total_deductions
 
