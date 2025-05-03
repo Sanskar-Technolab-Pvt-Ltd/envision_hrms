@@ -5,6 +5,7 @@ from frappe.utils import cint, get_datetime
 import frappe
 from hrms.hr.doctype.shift_type.shift_type import process_auto_attendance_for_all_shifts
 
+@frappe.whitelist()
 def run_attendance_scheduler():
     process_auto_attendance_for_all_shifts()
 

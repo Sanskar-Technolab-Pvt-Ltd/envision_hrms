@@ -164,7 +164,7 @@ doc_events = {
 
 scheduler_events = {
     "daily": [
-        "envision_hrms.utils.overrrides.employee_checkin.run_custom_attendance_scheduler"
+        "envision_hrms.overrides.employee_checkin.run_attendance_scheduler"
     ],
 # 	"all": [
 # 		"envision_hrms.tasks.all"
