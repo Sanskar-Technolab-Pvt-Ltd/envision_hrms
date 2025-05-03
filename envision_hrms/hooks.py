@@ -162,12 +162,10 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-    # "set_attendance_date": {
-    #     "55 23 * * *": [
-    #         "envision_hrms.utils.set_attendance_date"
-    #     ]
-    # },
+scheduler_events = {
+    "daily": [
+        "envision_hrms.utils.overrrides.employee_checkin.run_custom_attendance_scheduler"
+    ],
 # 	"all": [
 # 		"envision_hrms.tasks.all"
 # 	],
@@ -183,7 +181,7 @@ doc_events = {
 # 	"monthly": [
 # 		"envision_hrms.tasks.monthly"
 # 	],
-# }
+}
 
 # Testing
 # -------

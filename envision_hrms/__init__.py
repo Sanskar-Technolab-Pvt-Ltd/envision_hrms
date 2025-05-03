@@ -9,6 +9,10 @@ hrms.hr.doctype.employee_checkin.employee_checkin.add_log_based_on_employee_fiel
     envision_hrms.overrides.employee_checkin.add_log_based_on_employee_field
 )
 
+hrms.hr.doctype.employee_checkin.employee_checkin.EmployeeCheckin.validate_duplicate_log = (
+    envision_hrms.overrides.employee_checkin.custom_validate_duplicate_log
+)
+
 import hrms.hr.doctype.attendance.attendance
 import envision_hrms.overrides.custom_upload_attendance
 

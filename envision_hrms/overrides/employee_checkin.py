@@ -2,6 +2,12 @@ import frappe
 from frappe import _
 from frappe.utils import cint, get_datetime
 
+import frappe
+from hrms.hr.doctype.shift_type.shift_type import process_auto_attendance_for_all_shifts
+
+def run_attendance_scheduler():
+    process_auto_attendance_for_all_shifts()
+
 @frappe.whitelist()
 def add_log_based_on_employee_field(
 	employee_field_value,
@@ -51,3 +57,20 @@ def add_log_based_on_employee_field(
 	frappe.db.commit()
 
 	return doc
+
+@frappe.whitelist()
+def custom_validate_duplicate_log(self):
+		doc = frappe.db.exists(
+			"Employee Checkin",
+			{
+				"employee": self.employee,
+				"time": self.time,
+				"name": ("!=", self.name),
+				# "log_type": self.log_type,
+			},
+		)
+		if doc:
+			doc_link = frappe.get_desk_link("Employee Checkin", doc)
+			frappe.throw(
+				_("This employee already has a log with the same timestamp.{0}").format("<Br>" + doc_link)
+			)
