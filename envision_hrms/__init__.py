@@ -5,9 +5,13 @@ import envision_hrms.overrides.employee_checkin
 
 import hrms.hr.doctype.upload_attendance.upload_attendance
 
+# ----------------------Override add checkin logs method to commit database----------------------------
+
 hrms.hr.doctype.employee_checkin.employee_checkin.add_log_based_on_employee_field = (
     envision_hrms.overrides.employee_checkin.add_log_based_on_employee_field
 )
+
+# ----------------------Override validate duplicate log to add validation for log type----------------------------
 
 hrms.hr.doctype.employee_checkin.employee_checkin.EmployeeCheckin.validate_duplicate_log = (
     envision_hrms.overrides.employee_checkin.custom_validate_duplicate_log
@@ -16,13 +20,29 @@ hrms.hr.doctype.employee_checkin.employee_checkin.EmployeeCheckin.validate_dupli
 import hrms.hr.doctype.attendance.attendance
 import envision_hrms.overrides.custom_upload_attendance
 
+# ----------------------Override attendance validate function----------------------------
+
 hrms.hr.doctype.attendance.attendance.Attendance.validate = envision_hrms.overrides.custom_upload_attendance.custom_validate
+
+# ----------------------Override upload attendance template header format----------------------------
 
 hrms.hr.doctype.upload_attendance.upload_attendance.add_header = (
     envision_hrms.overrides.custom_upload_attendance.add_header
 )
 
+
+# ----------------------Calculate calender days and payable days to salary slip----------------------------
+
+
 from hrms.payroll.doctype.salary_slip.salary_slip import SalarySlip
 from envision_hrms.overrides.salary_slip import custom_get_working_days_details
 
 SalarySlip.get_working_days_details = custom_get_working_days_details
+
+
+# ----------------------Override validations for company from department to expense claim----------------------------
+
+from hrms.hr.doctype.expense_claim.expense_claim import ExpenseClaim
+from envision_hrms.api import custom_validate_company_and_department
+
+ExpenseClaim.validate_company_and_department = custom_validate_company_and_department

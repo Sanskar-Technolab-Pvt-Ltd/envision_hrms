@@ -1,0 +1,51 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-05-12 13:19:05.738650",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "advance_account",
+  "advance_limit"
+ ],
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "advance_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Advance Account",
+   "mandatory_depends_on": "eval: doc.company;",
+   "options": "Account"
+  },
+  {
+   "fieldname": "advance_limit",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Advance Limit",
+   "mandatory_depends_on": "eval: doc.company;"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-05-12 13:28:06.487555",
+ "modified_by": "Administrator",
+ "module": "Envision HRMS",
+ "name": "Employee Account Defaults",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

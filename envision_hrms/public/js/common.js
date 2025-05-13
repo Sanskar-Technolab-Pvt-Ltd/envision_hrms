@@ -34,52 +34,117 @@ frappe.ui.form.on('Employee', {
             frm.refresh_field('document_checklist');
         }
     },
-    refresh(frm){
-        frm.set_query('advance_account', function() {
-            if (frm.doc.company) {
-                return {
-                    filters: {
-                        company: frm.doc.company
-                        }
-                    };
+    refresh: function(frm) {
+        frm.fields_dict['custom_account_defaults'].grid.get_field('advance_account').get_query = function(doc, cdt, cdn) {
+            let row = locals[cdt][cdn];
+            return {
+                filters: {
+                    'company': row.company,
+                    'is_group': 0
                 }
-        });
+            };
+        };
     },
-    onload(frm){
-        if (frappe.session.user.has_role("Accounts Manager,HR Manager")) {
-			frm.add_custom_button(__('Update Advance Limit'), function () {
-                let dl = new frappe.ui.Dialog({
-                    title: 'Enter New Limit',
-                    fields: [{
-                        label: 'New Advance Limit',
-                        fieldname: 'new_limit',
-                        fieldtype: 'Currency',
-                        reqd: 1
-                    },
-                    ],
-                    primary_action_label: 'Update',
-                    primary_action(values) {
-                        frappe.db.set_value('Employee', frm.doc.name, {
-                            'advance_limit': values.new_limit,
-                        })
-                        dl.hide();
-                        location.reload();
-                    }
-                });
-                dl.show();
-            })
-		}
-    }
+    // onload(frm){
+    //     if (frappe.session.user.has_role("Accounts Manager,HR Manager")) {
+	// 		frm.add_custom_button(__('Update Advance Limit'), function () {
+    //             let dl = new frappe.ui.Dialog({
+    //                 title: 'Enter New Limit',
+    //                 fields: [{
+    //                     label: 'New Advance Limit',
+    //                     fieldname: 'new_limit',
+    //                     fieldtype: 'Currency',
+    //                     reqd: 1
+    //                 },
+    //                 ],
+    //                 primary_action_label: 'Update',
+    //                 primary_action(values) {
+    //                     frappe.db.set_value('Employee', frm.doc.name, {
+    //                         'advance_limit': values.new_limit,
+    //                     })
+    //                     dl.hide();
+    //                     location.reload();
+    //                 }
+    //             });
+    //             dl.show();
+    //         })
+	// 	}
+    // }
 });
 
+frappe.ui.form.on('Expense Claim', {
+    employee: function(frm){
+        frappe.call({
+            method: 'envision_hrms.api.get_employee_advance_account',
+            args: {
+                employee: frm.doc.employee,
+                company: frm.doc.company
+            },
+            callback: function(r) {
+                if (r.message) {
+                    frm.set_value('payable_account', r.message);
+                } else {
+                    frappe.throw({
+                        title: __('Account Error'),
+                        message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                        indicator: 'red'
+                    });
+                }
+            }
+        });
+    },
+    company: function(frm){
+        frappe.call({
+            method: 'envision_hrms.api.get_employee_advance_account',
+            args: {
+                employee: frm.doc.employee,
+                company: frm.doc.company
+            },
+            callback: function(r) {
+                if (r.message) {
+                    frm.set_value('payable_account', r.message);
+                } else {
+                    frappe.throw({
+                        title: __('Account Error'),
+                        message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                        indicator: 'red'
+                    });
+                }
+            }
+        });
+    },
+    
+});
+
+
 frappe.ui.form.on('Employee Advance', {
-    advance_amount: function(frm) {
+    employee: function(frm){
+        frappe.call({
+            method: 'envision_hrms.api.get_employee_advance_account',
+            args: {
+                employee: frm.doc.employee,
+                company: frm.doc.company
+            },
+            callback: function(r) {
+                if (r.message) {
+                    frm.set_value('advance_account', r.message);
+                } else {
+                    frappe.throw({
+                        title: __('Account Error'),
+                        message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                        indicator: 'red'
+                    });
+                }
+            }
+        });
+    },
+    before_save: function(frm) {
         if (frm.doc.employee && frm.doc.advance_amount) {
             frappe.call({
                 method: 'frappe.client.get_value',
                 args: {
-                    doctype: 'Employee',
-                    filters: { name: frm.doc.employee },
+                    doctype: 'Employee Account Defaults',
+                    filters: { parent: frm.doc.employee,company:frm.doc.company,advance_account:frm.doc.advance_account },
                     fieldname: 'advance_limit'
                 },
                 callback: function(r) {
@@ -88,11 +153,18 @@ frappe.ui.form.on('Employee Advance', {
                         if (frm.doc.advance_amount > advance_limit) {
                             frappe.msgprint({
                                 title: __('Validation Error'),
-                                message: __('Advance amount cannot exceed the advance limit of ₹{0}', [advance_limit]),
+                                message: __('Advance amount cannot exceed the advance limit of ₹{0} for company "{1}" with advance account {2}', [advance_limit ,frm.doc.company,frm.doc.advance_account]),
                                 indicator: 'red'
                             });
                             frm.set_value('advance_amount', '');
                         }
+                    }
+                    else{
+                        frappe.msgprint({
+                            title: __('Account Error'),
+                            message: __('Please set Limit for company "{0}" with advance account {1}', [frm.doc.company,frm.doc.advance_account]),
+                            indicator: 'red'
+                        });
                     }
                 }
             });
