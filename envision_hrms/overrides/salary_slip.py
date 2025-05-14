@@ -92,11 +92,11 @@ def custom_get_working_days_details(self, lwp=None, for_preview=0):
 
 	payment_days = self.get_payment_days(payroll_settings.include_holidays_in_total_working_days)
 
-	if self.calendar_days:
+	if self.week_off:
 		# self.calendar_days = self.total_working_days - self.week_off
 		payment_days = self.calendar_days - self.week_off
 	else:
-		pass
+		self.calendar_days = self.total_working_days
 	
 	if flt(payment_days) > flt(lwp):
 		self.payment_days = flt(payment_days) - flt(lwp)

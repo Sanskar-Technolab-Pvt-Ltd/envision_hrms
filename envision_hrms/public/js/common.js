@@ -45,31 +45,6 @@ frappe.ui.form.on('Employee', {
             };
         };
     },
-    // onload(frm){
-    //     if (frappe.session.user.has_role("Accounts Manager,HR Manager")) {
-	// 		frm.add_custom_button(__('Update Advance Limit'), function () {
-    //             let dl = new frappe.ui.Dialog({
-    //                 title: 'Enter New Limit',
-    //                 fields: [{
-    //                     label: 'New Advance Limit',
-    //                     fieldname: 'new_limit',
-    //                     fieldtype: 'Currency',
-    //                     reqd: 1
-    //                 },
-    //                 ],
-    //                 primary_action_label: 'Update',
-    //                 primary_action(values) {
-    //                     frappe.db.set_value('Employee', frm.doc.name, {
-    //                         'advance_limit': values.new_limit,
-    //                     })
-    //                     dl.hide();
-    //                     location.reload();
-    //                 }
-    //             });
-    //             dl.show();
-    //         })
-	// 	}
-    // }
 });
 
 frappe.ui.form.on('Expense Claim', {
@@ -118,7 +93,7 @@ frappe.ui.form.on('Expense Claim', {
 
 
 frappe.ui.form.on('Employee Advance', {
-    employee: function(frm){
+    company: function(frm){
         frappe.call({
             method: 'envision_hrms.api.get_employee_advance_account',
             args: {
