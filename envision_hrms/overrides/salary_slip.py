@@ -3,6 +3,7 @@ from frappe import _
 from frappe.utils import add_days, date_diff, flt, getdate
 from hrms.payroll.doctype.payroll_period.payroll_period import get_payroll_period
 from frappe.utils import cint
+from datetime import timedelta
 
 
 def custom_get_working_days_details(self, lwp=None, for_preview=0):
@@ -92,11 +93,11 @@ def custom_get_working_days_details(self, lwp=None, for_preview=0):
 
 	payment_days = self.get_payment_days(payroll_settings.include_holidays_in_total_working_days)
 
-	if self.calendar_days != 0:
-		# self.calendar_days = self.total_working_days - self.week_off
-		payment_days = self.calendar_days
-	# else:
-	# 	self.calendar_days = self.total_working_days
+	# if self.calendar_days != 0:
+	# 	# self.calendar_days = self.total_working_days - self.week_off
+	# 	payment_days = self.calendar_days
+	# # else:
+	# # 	self.calendar_days = self.total_working_days
 	
 	if flt(payment_days) > flt(lwp):
 		self.payment_days = flt(payment_days) - flt(lwp)
@@ -117,3 +118,31 @@ def custom_get_working_days_details(self, lwp=None, for_preview=0):
 			self.payment_days -= unmarked_days
 	else:
 		self.payment_days = 0
+
+	#Use calendar_days if full-month attendance and calendar_days is set
+	if self.calendar_days and self.start_date and self.end_date:
+		month_start = getdate(self.start_date).replace(day=1)
+		month_end = getdate(add_days(self.start_date, 32)).replace(day=1) - timedelta(days=1)
+	
+		# Check if full-month attendance is covered
+		if getdate(self.start_date) == month_start and getdate(self.end_date) == month_end:
+			
+			# Fetch employee joining and relieving dates
+			employee_data = frappe.get_value(
+				"Employee",
+				self.employee,
+				["date_of_joining", "relieving_date"],
+				as_dict=True
+			)
+
+			employee_joining_date = employee_data.get("date_of_joining")
+			relieving_date = employee_data.get("relieving_date")
+	
+			#joined on/before month_start AND not relieved mid-month
+			if (
+				employee_joining_date and getdate(employee_joining_date) <= month_start
+				and (not relieving_date or getdate(relieving_date) >= month_end)
+			):
+				# Make sure employee is not absent for all days
+				if self.absent_days != self.total_working_days:
+					self.payment_days = self.calendar_days - flt(self.absent_days)
