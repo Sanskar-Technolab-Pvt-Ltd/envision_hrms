@@ -34,8 +34,8 @@ frappe.ui.form.on('Employee', {
             frm.refresh_field('document_checklist');
         }
     },
-    refresh: function(frm) {
-        frm.fields_dict['custom_account_defaults'].grid.get_field('advance_account').get_query = function(doc, cdt, cdn) {
+    refresh: function (frm) {
+        frm.fields_dict['custom_account_defaults'].grid.get_field('advance_account').get_query = function (doc, cdt, cdn) {
             let row = locals[cdt][cdn];
             return {
                 filters: {
@@ -48,116 +48,160 @@ frappe.ui.form.on('Employee', {
 });
 
 frappe.ui.form.on('Expense Claim', {
-    employee: function(frm){
-        frappe.call({
-            method: 'envision_hrms.api.get_employee_advance_account',
-            args: {
-                employee: frm.doc.employee,
-                company: frm.doc.company
-            },
-            callback: function(r) {
-                if (r.message) {
-                    frm.set_value('payable_account', r.message);
-                } else {
-                    frappe.throw({
-                        title: __('Account Error'),
-                        message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
-                        indicator: 'red'
-                    });
-                }
-            }
-        });
-    },
-    company: function(frm){
-        frappe.call({
-            method: 'envision_hrms.api.get_employee_advance_account',
-            args: {
-                employee: frm.doc.employee,
-                company: frm.doc.company
-            },
-            callback: function(r) {
-                if (r.message) {
-                    frm.set_value('payable_account', r.message);
-                } else {
-                    frappe.throw({
-                        title: __('Account Error'),
-                        message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
-                        indicator: 'red'
-                    });
-                }
-            }
-        });
-    },
-    
+   employee: function (frm) {
+       if (!frm.doc.employee || !frm.doc.company) {
+           frm.set_value('payable_account', "");
+           return;
+       }
+       frappe.call({
+           method: 'envision_hrms.api.get_employee_advance_account',
+           args: {
+               employee: frm.doc.employee,
+               company: frm.doc.company
+           },
+           callback: function (r) {
+               if (r.message) {
+                   frm.set_value('payable_account', r.message);
+               } else {
+                   frm.set_value('payable_account', "");
+                   frappe.throw({
+                       title: __('Account Error'),
+                       message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                       indicator: 'red'
+                   });
+               }
+           }
+       });
+   },
+   company: function (frm) {
+       if (!frm.doc.employee || !frm.doc.company) {
+           frm.set_value('payable_account', "");
+           return;
+       }
+       frappe.call({
+           method: 'envision_hrms.api.get_employee_advance_account',
+           args: {
+               employee: frm.doc.employee,
+               company: frm.doc.company
+           },
+           callback: function (r) {
+               if (r.message) {
+                   frm.set_value('payable_account', r.message);
+               } else {
+                   frm.set_value('payable_account', "");
+                   frappe.throw({
+                       title: __('Account Error'),
+                       message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                       indicator: 'red'
+                   });
+               }
+           }
+       });
+   },
+
+
 });
+
+
 
 
 frappe.ui.form.on('Employee Advance', {
-    company: function(frm){
-        frappe.call({
-            method: 'envision_hrms.api.get_employee_advance_account',
-            args: {
-                employee: frm.doc.employee,
-                company: frm.doc.company
-            },
-            callback: function(r) {
-                if (r.message) {
-                    frm.set_value('advance_account', r.message);
-                } else {
-                    frappe.throw({
-                        title: __('Account Error'),
-                        message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
-                        indicator: 'red'
-                    });
-                }
-            }
-        });
-    },
-    before_save: function(frm) {
-        if (frm.doc.employee && frm.doc.advance_amount) {
-            frappe.call({
-                method: 'frappe.client.get_value',
-                args: {
-                    doctype: 'Employee Account Defaults',
-                    filters: { parent: frm.doc.employee,company:frm.doc.company,advance_account:frm.doc.advance_account },
-                    fieldname: 'advance_limit'
-                },
-                callback: function(r) {
-                    if (r.message && r.message.advance_limit !== undefined) {
-                        let advance_limit = r.message.advance_limit || 0;
-                        if (frm.doc.advance_amount > advance_limit) {
-                            frappe.msgprint({
-                                title: __('Validation Error'),
-                                message: __('Advance amount cannot exceed the advance limit of ₹{0} for company "{1}" with advance account {2}', [advance_limit ,frm.doc.company,frm.doc.advance_account]),
-                                indicator: 'red'
-                            });
-                            frm.set_value('advance_amount', '');
-                        }
-                    }
-                    else{
-                        frappe.msgprint({
-                            title: __('Account Error'),
-                            message: __('Please set Limit for company "{0}" with advance account {1}', [frm.doc.company,frm.doc.advance_account]),
-                            indicator: 'red'
-                        });
-                    }
-                }
-            });
-        }
-    }
+   employee: function (frm) {
+       if (!frm.doc.employee || !frm.doc.company) {
+           frm.set_value('advance_account', "");
+           return;
+       }
+       frappe.call({
+           method: 'envision_hrms.api.get_employee_advance_account',
+           args: {
+               employee: frm.doc.employee,
+               company: frm.doc.company
+           },
+           callback: function (r) {
+               if (r.message) {
+                   frm.set_value('advance_account', r.message);
+               } else {
+                   frm.set_value('advance_account', "");
+                   frappe.throw({
+                       title: __('Account Error'),
+                       message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                       indicator: 'red'
+                   });
+               }
+           }
+       });
+   },
+   company: function (frm) {
+       if (!frm.doc.employee || !frm.doc.company) {
+           frm.set_value('advance_account', "");
+           return;
+       }
+       frappe.call({
+           method: 'envision_hrms.api.get_employee_advance_account',
+           args: {
+               employee: frm.doc.employee,
+               company: frm.doc.company
+           },
+           callback: function (r) {
+               if (r.message) {
+                   frm.set_value('advance_account', r.message);
+               } else {
+                   frm.set_value('advance_account', "");
+                   frappe.throw({
+                       title: __('Account Error'),
+                       message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                       indicator: 'red'
+                   });
+               }
+           }
+       });
+   },
+   before_save: function (frm) {
+       if (frm.doc.employee && frm.doc.advance_amount) {
+           frappe.call({
+               method: 'frappe.client.get_value',
+               args: {
+                   doctype: 'Employee Account Defaults',
+                   filters: { parent: frm.doc.employee, company: frm.doc.company, advance_account: frm.doc.advance_account },
+                   fieldname: 'advance_limit'
+               },
+               callback: function (r) {
+                   if (r.message && r.message.advance_limit !== undefined) {
+                       let advance_limit = r.message.advance_limit || 0;
+                       if (frm.doc.advance_amount > advance_limit) {
+                           frappe.msgprint({
+                               title: __('Validation Error'),
+                               message: __('Advance amount cannot exceed the advance limit of ₹{0} for company "{1}" with advance account {2}', [advance_limit, frm.doc.company, frm.doc.advance_account]),
+                               indicator: 'red'
+                           });
+                           frm.set_value('advance_amount', '');
+                       }
+                   }
+                   else {
+                       frappe.msgprint({
+                           title: __('Account Error'),
+                           message: __('Please set Limit for company "{0}" with advance account {1}', [frm.doc.company, frm.doc.advance_account]),
+                           indicator: 'red'
+                       });
+                   }
+               }
+           });
+       }
+   }
 });
 
+
 frappe.ui.form.on('Retention Bonus', {
-    bonus_wage : function(frm){
-        frm.set_value("bonus_amount",0.00);
+    bonus_wage: function (frm) {
+        frm.set_value("bonus_amount", 0.00);
         frm.refresh_field("bonus_amount");
     },
-    bonus_percentage : function(frm){
-        frm.set_value("bonus_amount",0.00);
+    bonus_percentage: function (frm) {
+        frm.set_value("bonus_amount", 0.00);
         frm.refresh_field("bonus_amount");
     },
-    get_salary_slip : function(frm) {
-        if (!frm.doc.from_date || !frm.doc.to_date){
+    get_salary_slip: function (frm) {
+        if (!frm.doc.from_date || !frm.doc.to_date) {
             frappe.msgprint("Please select valid date range")
         }
         var yearly_bonus = frm.doc.yearly_bonus;
@@ -176,7 +220,7 @@ frappe.ui.form.on('Retention Bonus', {
                 async: false,
                 callback: function (response) {
                     console.log(response.message);
-                    if (response.message){
+                    if (response.message) {
                         frm.clear_table("employee_bonus");
 
                         var salary_slips = response.message[0];
@@ -188,7 +232,7 @@ frappe.ui.form.on('Retention Bonus', {
                             var row = frm.add_child("employee_bonus");
                             row.salary_slip = salary_slips[i].name;
                             row.basic_salary = salary_slips[i].base_gross_pay - get_salary_data[i].amount;
-                            
+
                             var amount = salary_slips[i].base_gross_pay - get_salary_data[i].amount;
                             totalAmount += amount
                         }
@@ -199,17 +243,17 @@ frappe.ui.form.on('Retention Bonus', {
                         frm.set_value("bonus_wage", totalAmount);
                         frm.refresh_field("bonus_wage");
                     }
-                    else{
+                    else {
                         frappe.msgprint("No Salary Slips Found between selected Dates")
                     }
                 }
             });
         }
     },
-    before_save:function(frm){
+    before_save: function (frm) {
         if (frm.doc.yearly_bonus == 1 && frm.doc.bonus_percentage && frm.doc.bonus_wage) {
-            if(frm.doc.bonus_amount == 0.00){
-                var bp = frm.doc.bonus_percentage / 100 ;
+            if (frm.doc.bonus_amount == 0.00) {
+                var bp = frm.doc.bonus_percentage / 100;
                 bp = parseFloat(bp.toFixed(4));
                 console.log(bp)
                 totalBonus = frm.doc.bonus_wage * bp;
@@ -218,14 +262,14 @@ frappe.ui.form.on('Retention Bonus', {
                 frm.set_value("bonus_amount", totalBonus);
                 frm.refresh_field("bonus_amount");
             }
-        } 
+        }
     }
 });
 
 frappe.ui.form.on('Attendance Request', {
-	before_save(frm) {
-		if(frm.doc.reason == "Early Going" || frm.doc.reason == "Late Coming" || frm.doc.reason == "Missed Punch In" || frm.doc.reason == "Missed Punch Out"){
-            if(frm.doc.from_date !== frm.doc.to_date){
+    before_save(frm) {
+        if (frm.doc.reason == "Early Going" || frm.doc.reason == "Late Coming" || frm.doc.reason == "Missed Punch In" || frm.doc.reason == "Missed Punch Out") {
+            if (frm.doc.from_date !== frm.doc.to_date) {
                 frappe.throw({
                     title: __('Validation'),
                     message: __('From Date and To Date must be the same for selected reason'),
@@ -233,7 +277,7 @@ frappe.ui.form.on('Attendance Request', {
                 });
             }
         }
-	},
+    },
     custom_checkin_time(frm) {
         let from_date = frm.doc.from_date;
         let checkin_datetime = frm.doc.custom_checkin_time;
@@ -241,7 +285,7 @@ frappe.ui.form.on('Attendance Request', {
         if (from_date && checkin_datetime) {
             let fromDateObj = new Date(from_date);
             fromDateObj.setHours(0, 0, 0, 0); // Normalize to midnight
-            
+
             let checkinDateObj = new Date(checkin_datetime);
 
             console.log("From Date:", fromDateObj);
@@ -265,7 +309,7 @@ frappe.ui.form.on('Attendance Request', {
         if (from_date && checkout_datetime) {
             let fromDateObj = new Date(from_date);
             fromDateObj.setHours(0, 0, 0, 0); // Normalize to midnight
-            
+
             let checkoutDateObj = new Date(checkout_datetime);
 
             console.log("From Date:", fromDateObj);
