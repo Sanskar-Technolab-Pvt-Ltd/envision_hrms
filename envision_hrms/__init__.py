@@ -46,3 +46,21 @@ from hrms.hr.doctype.expense_claim.expense_claim import ExpenseClaim
 from envision_hrms.api import custom_validate_company_and_department
 
 ExpenseClaim.validate_company_and_department = custom_validate_company_and_department
+
+
+# ----------------------Calculate encashment amount to leave encashment----------------------------
+
+
+from hrms.hr.doctype.leave_encashment.leave_encashment import LeaveEncashment
+from envision_hrms.overrides.leave_encashment import custom_set_encashment_amount
+
+LeaveEncashment.set_encashment_amount = custom_set_encashment_amount
+
+
+# ----------------------Compensatory Leave Request validation----------------------------
+
+
+from hrms.hr.doctype.compensatory_leave_request.compensatory_leave_request import CompensatoryLeaveRequest
+from envision_hrms.overrides.compensatory_leave_request import custom_validate_attendance
+
+CompensatoryLeaveRequest.validate_attendance = custom_validate_attendance
