@@ -145,7 +145,7 @@ def custom_get_working_days_details(self, lwp=None, for_preview=0):
 			):
 				# Make sure employee is not absent for all days
 				if self.absent_days != self.total_working_days:
-					self.payment_days = self.calendar_days - flt(self.absent_days)
+					self.payment_days = self.calendar_days - flt(self.absent_days) - flt(lwp)
 
 			else:
-				self.payment_days = self.payment_days - flt(self.week_off)
+				self.payment_days = self.payment_days - flt(self.week_off) - flt(lwp)
