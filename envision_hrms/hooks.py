@@ -26,7 +26,7 @@ app_license = "mit"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/envision_hrms/css/envision_hrms.css"
-app_include_js = "/assets/envision_hrms/js/common.js"
+app_include_js = ["/assets/envision_hrms/js/common.js", "/assets/envision_hrms/js/monthly_attendance_sheet.js"]
 
 # Migration
 # ------------
@@ -265,6 +265,6 @@ fixtures = [
     {"dt":"Client Script", "filters":[["module", "in", ["Envision HRMS"]]]},
     {"dt":"Property Setter", "filters":[["module", "in", ["Envision HRMS"]]]},
     {"dt":"Print Format", "filters":[["module", "in", ["Envision HRMS"]]]},
-    {"dt":"Workspace", "filters":[["name", "in", ["Employee Board","Employee Lifecycle","System Admin","HR"]]]},
+    {"dt":"Workspace", "filters":[["name", "in", ["Employee Board","Employee Lifecycle","System Admin","HR","Salary Payout","Shift & Attendance"]]]},
     {"dt":"Custom HTML Block", "filters":[["name", "in", ["Upcoming Birthdays","Work Anniversary"]]]},
 ]

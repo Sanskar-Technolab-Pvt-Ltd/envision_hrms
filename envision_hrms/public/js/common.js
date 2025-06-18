@@ -35,6 +35,91 @@ frappe.ui.form.on('Employee', {
         }
     },
     refresh: function (frm) {
+        if (frm.doc.reports_to) {
+            frm.add_custom_button('Create Advance Permissions', () => {
+                if(frm.doc.custom_advance_permissions_created==0)
+                {
+                    frappe.call({
+                    method: "frappe.client.get_value",
+                    args: {
+                        doctype: "Employee",
+                        filters: {
+                            name: frm.doc.reports_to
+                        },
+                        fieldname: "user_id"
+                    },
+                    callback: function (r) {
+                        if (r.message && r.message.user_id) {
+                            let user_id = r.message.user_id;
+
+                            const doctype_options = [
+                                "Employee",
+                                "Attendance",
+                                "Attendance Request",
+                                "Leave Application",
+                                "Employee Advance",
+                                "Expense Claim"
+                            ];
+
+                            // Use a prompt instead of MultiSelectDialog (which is for document selection)
+                            frappe.prompt([
+                                {
+                                    fieldname: 'selected_doctypes',
+                                    label: 'Select Applicable Doctypes',
+                                    fieldtype: 'MultiSelect',
+                                    options: doctype_options,
+                                    reqd: 1
+                                }
+                            ], function (values) {
+                                const selected_doctypes = Array.isArray(values.selected_doctypes)
+                                    ? values.selected_doctypes
+                                    : values.selected_doctypes.split(",").map(d => d.trim()).filter(Boolean);
+
+                                frappe.call({
+                                    method: "envision_hrms.api.create_advance_permissions",
+                                    args: {
+                                        user: user_id,
+                                        employee_id: frm.doc.name,
+                                        reports_to: frm.doc.reports_to,
+                                        selected_doctypes: selected_doctypes
+                                    },
+                                    callback: function () {
+                                        frm.set_value("custom_advance_permissions_created",1);
+                                        frm.save();
+                                        frappe.msgprint("User Permissions created successfully");
+                                    }
+                                });
+                            }, 'Grant Access to Reports To', 'Create');
+                        } else {
+                            frappe.msgprint("User ID not found for Reports To employee.");
+                        }
+                    }
+                });
+                }
+                else{
+                    frappe.call({
+                    method: "frappe.client.get_value",
+                    args: {
+                        doctype: "Employee",
+                        filters: {
+                            name: frm.doc.reports_to
+                        },
+                        fieldname: "user_id"
+                    },
+                    callback: function (r) {
+                        if (r.message && r.message.user_id) {
+                            let user_permission_url = `/app/user-permission/?user=${encodeURIComponent(r.message.user_id)}&for_value=${frm.doc.name}`;
+                            frappe.msgprint({
+                                title: "Notice",
+                                indicator: "orange",
+                                message: `User Permissions already created. Please verify them in the <a href="${user_permission_url}" target="_blank"><b>User Permission List</b></a>.`
+                            }); 
+                        }
+                    }
+                    })
+                }
+            }).addClass('btn btn-primary btn-sm primary-action'); 
+        }
         frm.fields_dict['custom_account_defaults'].grid.get_field('advance_account').get_query = function (doc, cdt, cdn) {
             let row = locals[cdt][cdn];
             return {
@@ -48,56 +133,56 @@ frappe.ui.form.on('Employee', {
 });
 
 frappe.ui.form.on('Expense Claim', {
-   employee: function (frm) {
-       if (!frm.doc.employee || !frm.doc.company) {
-           frm.set_value('payable_account', "");
-           return;
-       }
-       frappe.call({
-           method: 'envision_hrms.api.get_employee_advance_account',
-           args: {
-               employee: frm.doc.employee,
-               company: frm.doc.company
-           },
-           callback: function (r) {
-               if (r.message) {
-                   frm.set_value('payable_account', r.message);
-               } else {
-                   frm.set_value('payable_account', "");
-                   frappe.throw({
-                       title: __('Account Error'),
-                       message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
-                       indicator: 'red'
-                   });
-               }
-           }
-       });
-   },
-   company: function (frm) {
-       if (!frm.doc.employee || !frm.doc.company) {
-           frm.set_value('payable_account', "");
-           return;
-       }
-       frappe.call({
-           method: 'envision_hrms.api.get_employee_advance_account',
-           args: {
-               employee: frm.doc.employee,
-               company: frm.doc.company
-           },
-           callback: function (r) {
-               if (r.message) {
-                   frm.set_value('payable_account', r.message);
-               } else {
-                   frm.set_value('payable_account', "");
-                   frappe.throw({
-                       title: __('Account Error'),
-                       message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
-                       indicator: 'red'
-                   });
-               }
-           }
-       });
-   },
+    employee: function (frm) {
+        if (!frm.doc.employee || !frm.doc.company) {
+            frm.set_value('payable_account', "");
+            return;
+        }
+        frappe.call({
+            method: 'envision_hrms.api.get_employee_advance_account',
+            args: {
+                employee: frm.doc.employee,
+                company: frm.doc.company
+            },
+            callback: function (r) {
+                if (r.message) {
+                    frm.set_value('payable_account', r.message);
+                } else {
+                    frm.set_value('payable_account', "");
+                    frappe.throw({
+                        title: __('Account Error'),
+                        message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                        indicator: 'red'
+                    });
+                }
+            }
+        });
+    },
+    company: function (frm) {
+        if (!frm.doc.employee || !frm.doc.company) {
+            frm.set_value('payable_account', "");
+            return;
+        }
+        frappe.call({
+            method: 'envision_hrms.api.get_employee_advance_account',
+            args: {
+                employee: frm.doc.employee,
+                company: frm.doc.company
+            },
+            callback: function (r) {
+                if (r.message) {
+                    frm.set_value('payable_account', r.message);
+                } else {
+                    frm.set_value('payable_account', "");
+                    frappe.throw({
+                        title: __('Account Error'),
+                        message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                        indicator: 'red'
+                    });
+                }
+            }
+        });
+    },
 
 
 });
@@ -106,88 +191,88 @@ frappe.ui.form.on('Expense Claim', {
 
 
 frappe.ui.form.on('Employee Advance', {
-   employee: function (frm) {
-       if (!frm.doc.employee || !frm.doc.company) {
-           frm.set_value('advance_account', "");
-           return;
-       }
-       frappe.call({
-           method: 'envision_hrms.api.get_employee_advance_account',
-           args: {
-               employee: frm.doc.employee,
-               company: frm.doc.company
-           },
-           callback: function (r) {
-               if (r.message) {
-                   frm.set_value('advance_account', r.message);
-               } else {
-                   frm.set_value('advance_account', "");
-                   frappe.throw({
-                       title: __('Account Error'),
-                       message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
-                       indicator: 'red'
-                   });
-               }
-           }
-       });
-   },
-   company: function (frm) {
-       if (!frm.doc.employee || !frm.doc.company) {
-           frm.set_value('advance_account', "");
-           return;
-       }
-       frappe.call({
-           method: 'envision_hrms.api.get_employee_advance_account',
-           args: {
-               employee: frm.doc.employee,
-               company: frm.doc.company
-           },
-           callback: function (r) {
-               if (r.message) {
-                   frm.set_value('advance_account', r.message);
-               } else {
-                   frm.set_value('advance_account', "");
-                   frappe.throw({
-                       title: __('Account Error'),
-                       message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
-                       indicator: 'red'
-                   });
-               }
-           }
-       });
-   },
-   before_save: function (frm) {
-       if (frm.doc.employee && frm.doc.advance_amount) {
-           frappe.call({
-               method: 'frappe.client.get_value',
-               args: {
-                   doctype: 'Employee Account Defaults',
-                   filters: { parent: frm.doc.employee, company: frm.doc.company, advance_account: frm.doc.advance_account },
-                   fieldname: 'advance_limit'
-               },
-               callback: function (r) {
-                   if (r.message && r.message.advance_limit !== undefined) {
-                       let advance_limit = r.message.advance_limit || 0;
-                       if (frm.doc.advance_amount > advance_limit) {
-                           frappe.msgprint({
-                               title: __('Validation Error'),
-                               message: __('Advance amount cannot exceed the advance limit of ₹{0} for company "{1}" with advance account {2}', [advance_limit, frm.doc.company, frm.doc.advance_account]),
-                               indicator: 'red'
-                           });
-                           frm.set_value('advance_amount', '');
-                       }
-                   }
-                   else {
-                       frappe.msgprint({
-                           title: __('Account Error'),
-                           message: __('Please set Limit for company "{0}" with advance account {1}', [frm.doc.company, frm.doc.advance_account]),
-                           indicator: 'red'
-                       });
-                   }
-               }
-           });
-       }
-   }
+    employee: function (frm) {
+        if (!frm.doc.employee || !frm.doc.company) {
+            frm.set_value('advance_account', "");
+            return;
+        }
+        frappe.call({
+            method: 'envision_hrms.api.get_employee_advance_account',
+            args: {
+                employee: frm.doc.employee,
+                company: frm.doc.company
+            },
+            callback: function (r) {
+                if (r.message) {
+                    frm.set_value('advance_account', r.message);
+                } else {
+                    frm.set_value('advance_account', "");
+                    frappe.throw({
+                        title: __('Account Error'),
+                        message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                        indicator: 'red'
+                    });
+                }
+            }
+        });
+    },
+    company: function (frm) {
+        if (!frm.doc.employee || !frm.doc.company) {
+            frm.set_value('advance_account', "");
+            return;
+        }
+        frappe.call({
+            method: 'envision_hrms.api.get_employee_advance_account',
+            args: {
+                employee: frm.doc.employee,
+                company: frm.doc.company
+            },
+            callback: function (r) {
+                if (r.message) {
+                    frm.set_value('advance_account', r.message);
+                } else {
+                    frm.set_value('advance_account', "");
+                    frappe.throw({
+                        title: __('Account Error'),
+                        message: __('Please set Advance Account for company : {0}', [frm.doc.company]),
+                        indicator: 'red'
+                    });
+                }
+            }
+        });
+    },
+    before_save: function (frm) {
+        if (frm.doc.employee && frm.doc.advance_amount) {
+            frappe.call({
+                method: 'frappe.client.get_value',
+                args: {
+                    doctype: 'Employee Account Defaults',
+                    filters: { parent: frm.doc.employee, company: frm.doc.company, advance_account: frm.doc.advance_account },
+                    fieldname: 'advance_limit'
+                },
+                callback: function (r) {
+                    if (r.message && r.message.advance_limit !== undefined) {
+                        let advance_limit = r.message.advance_limit || 0;
+                        if (frm.doc.advance_amount > advance_limit) {
+                            frappe.msgprint({
+                                title: __('Validation Error'),
+                                message: __('Advance amount cannot exceed the advance limit of ₹{0} for company "{1}" with advance account {2}', [advance_limit, frm.doc.company, frm.doc.advance_account]),
+                                indicator: 'red'
+                            });
+                            frm.set_value('advance_amount', '');
+                        }
+                    }
+                    else {
+                        frappe.msgprint({
+                            title: __('Account Error'),
+                            message: __('Please set Limit for company "{0}" with advance account {1}', [frm.doc.company, frm.doc.advance_account]),
+                            indicator: 'red'
+                        });
+                    }
+                }
+            });
+        }
+    }
 });
 
 

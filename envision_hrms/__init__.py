@@ -64,3 +64,23 @@ from hrms.hr.doctype.compensatory_leave_request.compensatory_leave_request impor
 from envision_hrms.overrides.compensatory_leave_request import custom_validate_attendance
 
 CompensatoryLeaveRequest.validate_attendance = custom_validate_attendance
+
+
+# --------------------Overrided methods for monthly attendance sheet----------------------
+
+from hrms.hr.report.monthly_attendance_sheet import monthly_attendance_sheet
+from envision_hrms.overrides.monthly_attendance_sheet import (
+     execute_override, 
+     get_employee_related_details_override,
+     get_attendance_status_for_detailed_view_override,
+     get_holiday_status_override,
+     get_attendance_map_override,
+     get_attendance_records_override
+)
+
+monthly_attendance_sheet.execute = execute_override
+monthly_attendance_sheet.get_employee_related_details = get_employee_related_details_override
+monthly_attendance_sheet.get_holiday_status = get_holiday_status_override
+monthly_attendance_sheet.get_attendance_status_for_detailed_view = get_attendance_status_for_detailed_view_override
+monthly_attendance_sheet.get_attendance_map = get_attendance_map_override
+monthly_attendance_sheet.get_attendance_records = get_attendance_records_override
