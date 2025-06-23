@@ -43,7 +43,7 @@ def deduct_advance_limit_ec(self, method):
         updated = False
 
         for row in employee_doc.custom_account_defaults:
-            if row.company == self.company and row.advance_account == self.advance_account:
+            if row.company == self.company and row.advance_account == self.payable_account:
                 row.advance_limit = (row.advance_limit or 0) + self.total_advance_amount
                 updated = True
                 break
@@ -58,7 +58,7 @@ def add_advance_limit_ec(self, method):
         updated = False
 
         for row in employee_doc.custom_account_defaults:
-            if row.company == self.company and row.advance_account == self.advance_account:
+            if row.company == self.company and row.advance_account == self.payable_account:
                 row.advance_limit = (row.advance_limit or 0) - self.total_advance_amount
                 updated = True
                 break

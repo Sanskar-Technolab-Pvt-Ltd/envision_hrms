@@ -35,7 +35,7 @@ frappe.ui.form.on('Employee', {
         }
     },
     refresh: function (frm) {
-        if (frm.doc.reports_to) {
+        if (frm.doc.reports_to && frappe.user.has_role('HR Manager') || frappe.user.has_role('HR User') || frappe.user.has_role('System Manager')) {
             frm.add_custom_button('Create Advance Permissions', () => {
                 if(frm.doc.custom_advance_permissions_created==0)
                 {
