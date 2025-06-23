@@ -59,7 +59,9 @@ frappe.ui.form.on('Employee', {
                                 "Leave Application",
                                 "Employee Advance",
                                 "Expense Claim",
-                                "Appraisal"
+                                "Appraisal",
+                                "Employee Performance Feedback",
+                                "Compensatory Leave Request"
                             ];
 
                             // Use a prompt instead of MultiSelectDialog (which is for document selection)
