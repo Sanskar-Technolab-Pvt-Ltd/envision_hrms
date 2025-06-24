@@ -1,0 +1,323 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-06-23 16:50:28.253076",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_y7sf",
+  "employee",
+  "employee_name",
+  "last_working_day",
+  "column_break_apha",
+  "date",
+  "date_of_joining",
+  "designation",
+  "amended_from",
+  "reason_for_leaving_section",
+  "que_1",
+  "job_satisfaction_section",
+  "que_2",
+  "que_3",
+  "que_4",
+  "work_environment_section",
+  "que_5",
+  "que_6",
+  "que_7",
+  "communication_and_feedback_section",
+  "que_8",
+  "que_9",
+  "que_10",
+  "professional_development_section",
+  "que_11",
+  "que_12",
+  "que_13",
+  "management_section",
+  "que_14",
+  "que_15",
+  "que_16",
+  "company_culture_section",
+  "que_17",
+  "que_18",
+  "que_19",
+  "suggestions_for_improvement_section",
+  "que_20",
+  "comments"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_y7sf",
+   "fieldtype": "Section Break",
+   "label": "Employee Information"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Exit Interview Questionnaire",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
+  },
+  {
+   "fieldname": "column_break_apha",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.designation",
+   "fieldname": "designation",
+   "fieldtype": "Link",
+   "label": "Designation",
+   "options": "Designation"
+  },
+  {
+   "fetch_from": "employee.relieving_date",
+   "fieldname": "last_working_day",
+   "fieldtype": "Date",
+   "label": "Last Working Day",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.date_of_joining",
+   "fieldname": "date_of_joining",
+   "fieldtype": "Date",
+   "label": "Date Of Joining"
+  },
+  {
+   "fieldname": "reason_for_leaving_section",
+   "fieldtype": "Section Break",
+   "label": "Reason for Leaving"
+  },
+  {
+   "fieldname": "que_1",
+   "fieldtype": "Small Text",
+   "label": "1. What prompted your decision to leave the company?"
+  },
+  {
+   "fieldname": "job_satisfaction_section",
+   "fieldtype": "Section Break",
+   "label": "Job Satisfaction"
+  },
+  {
+   "fieldname": "que_2",
+   "fieldtype": "Small Text",
+   "label": "2. Were you satisfied with your job role and responsibilities?"
+  },
+  {
+   "fieldname": "que_3",
+   "fieldtype": "Small Text",
+   "label": "3. What aspects of your job did you enjoy the most?"
+  },
+  {
+   "fieldname": "que_4",
+   "fieldtype": "Small Text",
+   "label": "4. Were there any aspects of your job that you found challenging or dissatisfying?"
+  },
+  {
+   "fieldname": "work_environment_section",
+   "fieldtype": "Section Break",
+   "label": "Work Environment"
+  },
+  {
+   "fieldname": "que_5",
+   "fieldtype": "Small Text",
+   "label": "5. How would you rate the overall work environment and culture?"
+  },
+  {
+   "fieldname": "que_6",
+   "fieldtype": "Small Text",
+   "label": "6. Did you feel valued and supported as an employee?"
+  },
+  {
+   "fieldname": "que_7",
+   "fieldtype": "Small Text",
+   "label": "7. Did you receive adequate recognition for your work and achievements?"
+  },
+  {
+   "fieldname": "communication_and_feedback_section",
+   "fieldtype": "Section Break",
+   "label": "Communication and Feedback"
+  },
+  {
+   "fieldname": "que_8",
+   "fieldtype": "Small Text",
+   "label": "8. How would you rate the communication within the company?"
+  },
+  {
+   "fieldname": "que_9",
+   "fieldtype": "Small Text",
+   "label": "9. Did you receive regular feedback and performance evaluations?"
+  },
+  {
+   "fieldname": "que_10",
+   "fieldtype": "Small Text",
+   "label": "10. Were your suggestions and concerns addressed appropriately?"
+  },
+  {
+   "fieldname": "professional_development_section",
+   "fieldtype": "Section Break",
+   "label": "Professional Development"
+  },
+  {
+   "fieldname": "que_11",
+   "fieldtype": "Small Text",
+   "label": "11. Did you have opportunities for professional growth and development?"
+  },
+  {
+   "fieldname": "que_12",
+   "fieldtype": "Small Text",
+   "label": "12. Did you receive sufficient training and support to perform your job effectively?"
+  },
+  {
+   "fieldname": "que_13",
+   "fieldtype": "Small Text",
+   "label": "13. Were there clear career progression opportunities within the company?"
+  },
+  {
+   "fieldname": "management_section",
+   "fieldtype": "Section Break",
+   "label": "Management"
+  },
+  {
+   "fieldname": "que_14",
+   "fieldtype": "Small Text",
+   "label": "14. How would you rate the effectiveness of your immediate supervisor/manager?"
+  },
+  {
+   "fieldname": "que_15",
+   "fieldtype": "Small Text",
+   "label": "15. Did you feel that your supervisor/manager provided adequate guidance and support?"
+  },
+  {
+   "fieldname": "que_16",
+   "fieldtype": "Small Text",
+   "label": "16. Were your concerns or grievances addressed appropriately by the management?"
+  },
+  {
+   "fieldname": "company_culture_section",
+   "fieldtype": "Section Break",
+   "label": "Company Culture"
+  },
+  {
+   "fieldname": "que_17",
+   "fieldtype": "Small Text",
+   "label": "17. Did you feel a sense of alignment with the company's mission and values?"
+  },
+  {
+   "fieldname": "que_18",
+   "fieldtype": "Small Text",
+   "label": "18. How would you rate the overall company culture?"
+  },
+  {
+   "fieldname": "que_19",
+   "fieldtype": "Small Text",
+   "label": "19. Did you have a good work-life balance during your tenure?"
+  },
+  {
+   "fieldname": "suggestions_for_improvement_section",
+   "fieldtype": "Section Break",
+   "label": "Suggestions for Improvement"
+  },
+  {
+   "fieldname": "que_20",
+   "fieldtype": "Small Text",
+   "label": "20. Do you have any suggestions for how the company can improve employee satisfaction and retention?"
+  },
+  {
+   "fieldname": "comments",
+   "fieldtype": "Small Text",
+   "label": "Additional Comments "
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Date",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-06-23 18:24:24.497877",
+ "modified_by": "Administrator",
+ "module": "Envision HRMS",
+ "name": "Exit Interview Questionnaire",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
