@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:{employee}-{employee_name}",
  "creation": "2025-06-23 16:50:28.253076",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -64,6 +65,7 @@
    "fieldname": "employee",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee",
    "reqd": 1
@@ -245,8 +247,9 @@
   },
   {
    "fieldname": "date",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Date",
    "reqd": 1
   }
@@ -255,10 +258,11 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-23 18:24:24.497877",
+ "modified": "2025-06-24 15:46:17.977547",
  "modified_by": "Administrator",
  "module": "Envision HRMS",
  "name": "Exit Interview Questionnaire",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
