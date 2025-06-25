@@ -35,7 +35,7 @@ frappe.ui.form.on('Employee', {
         }
     },
     refresh: function (frm) {
-        if (frm.doc.reports_to && frappe.user.has_role('HR Manager') || frappe.user.has_role('HR User') || frappe.user.has_role('System Manager')) {
+        if (frm.doc.reports_to && (frappe.user.has_role('HR Manager') || frappe.user.has_role('HR User') || frappe.user.has_role('System Manager'))) {
             frm.add_custom_button('Create Advance Permissions', () => {
                 if(frm.doc.custom_advance_permissions_created==0)
                 {
@@ -61,7 +61,8 @@ frappe.ui.form.on('Employee', {
                                 "Expense Claim",
                                 "Appraisal",
                                 "Employee Performance Feedback",
-                                "Compensatory Leave Request"
+                                "Compensatory Leave Request",
+                                "Travel Request"
                             ];
 
                             // Use a prompt instead of MultiSelectDialog (which is for document selection)
