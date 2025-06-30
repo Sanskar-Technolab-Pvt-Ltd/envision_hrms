@@ -1645,7 +1645,7 @@
    "name": "Employee-custom_probation",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "Probation",
+   "options": "Employee Probation",
    "owner": "Administrator",
    "permlevel": 0,
    "placeholder": null,

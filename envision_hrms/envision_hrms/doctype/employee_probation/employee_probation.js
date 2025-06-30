@@ -1,15 +1,20 @@
 // Copyright (c) 2024, Pooja Vadher and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on("Probation", {
+frappe.ui.form.on("Employee Probation", {
 	onload(frm) {
         frm.set_query("employee", function () {
             return {
                 filters: {
                     'employment_type': "Probation",
+                    'status' : "Active"
                 }
             };
         });
+        if(!frm.doc.transfer){
+            frm.set_value('new_company', "");
+            frm.refresh_field('new_company');
+        }
 	},
     refresh(frm){
         frm.fields_dict['probation_duration'].grid.get_field('appraisal').get_query = function(doc, cdt, cdn) {
@@ -21,5 +26,9 @@ frappe.ui.form.on("Probation", {
                 }
             };
         };
+        if(!frm.doc.transfer){
+            frm.set_value('new_company', "");
+            frm.refresh_field('new_company');
+        }
     }
 });

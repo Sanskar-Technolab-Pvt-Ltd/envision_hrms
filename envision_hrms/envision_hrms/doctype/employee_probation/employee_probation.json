@@ -14,6 +14,7 @@
   "employee_name",
   "status",
   "comapny",
+  "transfer",
   "new_company",
   "amended_from",
   "company_details_section",
@@ -37,6 +38,8 @@
    "reqd": 1
   },
   {
+   "fetch_from": "employee.reports_to",
+   "fetch_if_empty": 1,
    "fieldname": "reviewd_by",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -60,7 +63,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Probation",
+   "options": "Employee Probation",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -121,10 +124,12 @@
    "options": "Employment Type"
   },
   {
+   "depends_on": "transfer",
    "description": "Specify New company if you want to create new employee record for new company.",
    "fieldname": "new_company",
    "fieldtype": "Link",
    "label": "New Company",
+   "mandatory_depends_on": "transfer",
    "options": "Company"
   },
   {
@@ -181,16 +186,22 @@
    "label": "Grade",
    "mandatory_depends_on": "new_company",
    "options": "Employee Grade"
+  },
+  {
+   "default": "0",
+   "fieldname": "transfer",
+   "fieldtype": "Check",
+   "label": "Transfer To New Company"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-23 13:19:41.441098",
+ "modified": "2025-06-30 16:58:49.844887",
  "modified_by": "Administrator",
  "module": "Envision HRMS",
- "name": "Probation",
+ "name": "Employee Probation",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
