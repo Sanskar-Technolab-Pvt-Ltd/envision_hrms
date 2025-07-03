@@ -128,6 +128,7 @@
    "description": "Specify New company if you want to create new employee record for new company.",
    "fieldname": "new_company",
    "fieldtype": "Link",
+   "ignore_user_permissions": 1,
    "label": "New Company",
    "mandatory_depends_on": "transfer",
    "options": "Company"
@@ -143,6 +144,7 @@
    "fetch_if_empty": 1,
    "fieldname": "department",
    "fieldtype": "Link",
+   "ignore_user_permissions": 1,
    "label": "Department",
    "mandatory_depends_on": "new_company",
    "options": "Department"
@@ -198,7 +200,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-30 16:58:49.844887",
+ "modified": "2025-07-03 17:05:44.359862",
  "modified_by": "Administrator",
  "module": "Envision HRMS",
  "name": "Employee Probation",

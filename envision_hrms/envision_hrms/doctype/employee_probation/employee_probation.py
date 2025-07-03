@@ -13,13 +13,19 @@ class EmployeeProbation(Document):
 		
 		# Fetch the Employee record
 		employee = frappe.get_doc("Employee", self.employee)
+		companycode = frappe.db.get_value("Company",self.new_company,'custom_company_code')
 		
 		# Update the Employment Type
 		if self.transfer and self.new_company:
-			new_emp = frappe.copy_doc(employee)
+			employee.status = "Inactive"
+			employee.attendance_device_id = ""
+			employee.save()
 
+			new_emp = frappe.copy_doc(employee)
 			new_emp.name = None
 			new_emp.naming_series = ".{companycode}.{site_location}.###"
+			new_emp.companycode = companycode
+			print(companycode)
 			new_emp.user_id = None
 			new_emp.date_of_joining = frappe.utils.nowdate()
 			new_emp.company = self.new_company
@@ -30,23 +36,19 @@ class EmployeeProbation(Document):
 			new_emp.custom_skill_level = self.skill_level
 			new_emp.calender_days = 0
 			new_emp.employment_type = self.new_employment_type
+			new_emp.custom_probation = self.name
 
 			new_emp.insert()
-
-			employee.status = "Inactive"
-			employee.save()
-
 			frappe.msgprint(f"New Employee {new_emp.name} created.")
 		else:
 			employee.employment_type = self.new_employment_type
-			employee.custom_employee_probation = self.name 
 			employee.save()
 			frappe.msgprint(f"Employment type updated for Employee {employee.employee_name}.")
 	
 	def on_cancel(self):
-		employee = frappe.get_doc("Employee", self.employee) 
-
-		if not self.new_company:
+		if self.new_company:
+			linked_emp = frappe.get_value('Employee',{ 'probation' : self.name }, ['name'])
+			employee = frappe.get_doc("Employee", self.employee) 
 			employee.employment_type = self.current_employment_type
 			employee.custom_probation = ""
 			employee.save()
