@@ -23,10 +23,11 @@ class EmployeeProbation(Document):
 
 			new_emp = frappe.copy_doc(employee)
 			new_emp.name = None
-			new_emp.naming_series = ".{companycode}.{site_location}.###"
+			new_emp.status = "Active"
+			new_emp.naming_series = employee.naming_series
 			new_emp.companycode = companycode
 			new_emp.user_id = None
-			new_emp.date_of_joining = frappe.utils.nowdate()
+			new_emp.date_of_joining = self.date_of_joining
 			new_emp.company = self.new_company
 			new_emp.site_location = self.site_location
 			new_emp.department = self.department
@@ -48,7 +49,7 @@ class EmployeeProbation(Document):
 	def on_cancel(self):
 		if self.new_company:
 			linked_emp = frappe.get_value('Employee',{ 'probation' : self.name }, ['name'])
-			employee = frappe.get_doc("Employee", self.employee) 
+			employee = frappe.get_doc("Employee", linked_emp) 
 			employee.employment_type = self.current_employment_type
 			employee.custom_probation = ""
 			employee.save()

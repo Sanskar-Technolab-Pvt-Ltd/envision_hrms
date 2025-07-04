@@ -12,6 +12,7 @@
   "comapny_code",
   "column_break_ttar",
   "employee_name",
+  "date_of_joining",
   "status",
   "comapny",
   "transfer",
@@ -106,7 +107,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Open\nExtended\nTerminated",
+   "options": "Open\nExtended\nCompleted",
    "reqd": 1
   },
   {
@@ -194,13 +195,19 @@
    "fieldname": "transfer",
    "fieldtype": "Check",
    "label": "Transfer To New Company"
+  },
+  {
+   "fieldname": "date_of_joining",
+   "fieldtype": "Date",
+   "label": "Employment Start Date",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-03 17:05:44.359862",
+ "modified": "2025-07-04 16:06:21.963762",
  "modified_by": "Administrator",
  "module": "Envision HRMS",
  "name": "Employee Probation",
