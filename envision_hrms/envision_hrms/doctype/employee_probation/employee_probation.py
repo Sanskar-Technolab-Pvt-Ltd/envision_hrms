@@ -25,7 +25,6 @@ class EmployeeProbation(Document):
 			new_emp.name = None
 			new_emp.naming_series = ".{companycode}.{site_location}.###"
 			new_emp.companycode = companycode
-			print(companycode)
 			new_emp.user_id = None
 			new_emp.date_of_joining = frappe.utils.nowdate()
 			new_emp.company = self.new_company
@@ -37,6 +36,7 @@ class EmployeeProbation(Document):
 			new_emp.calender_days = 0
 			new_emp.employment_type = self.new_employment_type
 			new_emp.custom_probation = self.name
+			new_emp.custom_probation = self.custom_advance_permissions_created = 0
 
 			new_emp.insert()
 			frappe.msgprint(f"New Employee {new_emp.name} created.")
