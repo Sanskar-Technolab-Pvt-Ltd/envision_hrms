@@ -50,7 +50,8 @@ after_migrate = "envision_hrms.disable_collaps.after_migrate"
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 doctype_js = {"Expense Claim" : "public/js/expense_claim.js",
               "Company" : "public/js/company_code.js",
-              "Salary Slip":"public/js/salary_slip.js"
+              "Salary Slip":"public/js/salary_slip.js",
+              "Payroll Entry": "public/js/payroll_entry.js"
               }
 doctype_list_js = {"Attendance" : "public/js/attendance_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -258,6 +259,7 @@ scheduler_events = {
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
+
 
 fixtures = [
     {"dt":"Web Form", "filters":[["name", "in", ["job-application"]]]},
