@@ -94,32 +94,33 @@ def custom_get_working_days_details(self, lwp=None, for_preview=0):
 	self.total_working_days = working_days
 
 	payment_days = self.get_payment_days(payroll_settings.include_holidays_in_total_working_days)
-
-	# if self.calendar_days != 0:
-	# 	# self.calendar_days = self.total_working_days - self.week_off
-	# 	payment_days = self.calendar_days
-	# # else:
-	# # 	self.calendar_days = self.total_working_days
 	
 	if flt(payment_days) > flt(lwp):
-		self.payment_days = flt(payment_days) - flt(lwp)
+			self.payment_days = flt(payment_days) - flt(lwp)
 
-		if payroll_settings.payroll_based_on == "Attendance":
-			self.payment_days -= flt(absent)
+			if payroll_settings.payroll_based_on == "Attendance":
+				self.payment_days -= flt(absent)
 
-		consider_unmarked_attendance_as = payroll_settings.consider_unmarked_attendance_as or "Present"
+			consider_unmarked_attendance_as = payroll_settings.consider_unmarked_attendance_as or "Present"
 
-		if (
-			payroll_settings.payroll_based_on == "Attendance"
-			and consider_unmarked_attendance_as == "Absent"
-		):
-			unmarked_days = self.get_unmarked_days(
-				payroll_settings.include_holidays_in_total_working_days, holidays
-			)
-			self.absent_days += unmarked_days  # will be treated as absent
-			self.payment_days -= unmarked_days
+			if (
+				payroll_settings.payroll_based_on == "Attendance"
+				and consider_unmarked_attendance_as == "Absent"
+			):
+				unmarked_days = self.get_unmarked_days(
+					payroll_settings.include_holidays_in_total_working_days, holidays
+				)
+				half_absent_days = self.get_half_absent_days(
+					payroll_settings.include_holidays_in_total_working_days,
+					consider_marked_attendance_on_holidays,
+					holidays,
+				)
+				self.absent_days += (
+					unmarked_days + half_absent_days * daily_wages_fraction_for_half_day
+				)  # will be treated as absent
+				self.payment_days -= unmarked_days + half_absent_days * daily_wages_fraction_for_half_day
 	else:
-		self.payment_days = 0
+			self.payment_days = 0
 
 	#Use calendar_days if full-month attendance and calendar_days is set
 	if self.calendar_days and self.start_date and self.end_date:
