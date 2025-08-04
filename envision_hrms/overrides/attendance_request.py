@@ -222,11 +222,9 @@ def create_checkins(self):
 		checkout_doc.insert(ignore_permissions=True)
 		checkout_doc.save()
 
-
 @frappe.whitelist()
 def update_attendance_from_checkins(self, attendance_date):
     # Fetch Check-ins for the employee on the attendance date
-	
     checkins = frappe.get_all(
         "Employee Checkin",
         filters={
@@ -244,10 +242,12 @@ def update_attendance_from_checkins(self, attendance_date):
     if in_logs and out_logs:
         in_time = in_logs[0]["time"]
         out_time = out_logs[-1]["time"]  # Latest OUT time
-        
+
         # Calculate Working Hours
-        working_hours = (frappe.utils.get_datetime(out_time) - frappe.utils.get_datetime(in_time)).total_seconds() / 3600
-        
+        working_hours = (
+            frappe.utils.get_datetime(out_time) - frappe.utils.get_datetime(in_time)
+        ).total_seconds() / 3600
+
         # Get or Create Attendance Record
         attendance_name = self.get_attendance_record(attendance_date)
         if attendance_name:
@@ -257,19 +257,25 @@ def update_attendance_from_checkins(self, attendance_date):
                 "out_time": out_time,
                 "working_hours": working_hours,
                 "status": "Present",
-				"late_entry":0,
-				"early_exit":0,
+                "late_entry": 0,
+                "early_exit": 0,
                 "attendance_request": self.name
             })
         else:
-            attendance_name = mark_attendance(
-                employee=self.employee,
-                attendance_date=attendance_date,
-                in_time=in_time,
-                out_time=out_time,
-                working_hours=working_hours,
-                attendance_request=self.name
-            )
+            attendance = frappe.new_doc("Attendance")
+            attendance.update({
+                "employee": self.employee,
+                "attendance_date": attendance_date,
+                "status": "Present",
+				"shift": self.shift,
+                "in_time": in_time,
+                "out_time": out_time,
+                "working_hours": working_hours,
+                "attendance_request": self.name
+            })
+            attendance.insert(ignore_permissions=True)
+            attendance.submit()
+            attendance_name = attendance.name  # capture new name
 
         # Link Check-ins to the Attendance record
         for checkin in checkins:
@@ -279,3 +285,5 @@ def update_attendance_from_checkins(self, attendance_date):
 
     else:
         frappe.msgprint(_("No valid check-in or check-out records found for the date."))
+
+
