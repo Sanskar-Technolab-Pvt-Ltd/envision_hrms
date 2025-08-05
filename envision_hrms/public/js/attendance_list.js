@@ -17,6 +17,8 @@ frappe.listview_settings["Attendance"] = {
 	onload: function (list_view) {
 		let me = this;
 
+		frappe.breadcrumbs.add("" , "Shift & Attendance");	
+
 		list_view.page.add_inner_button(__("Mark Attendance"), function () {
 			let first_day_of_month = moment().startOf("month");
 
@@ -53,6 +55,13 @@ frappe.listview_settings["Attendance"] = {
 						default: first_day_of_month.toDate(),
 						onchange: () => me.get_unmarked_days(dialog),
 					},
+					// {
+					// 	label: __("Status"),
+					// 	fieldtype: "Select",
+					// 	fieldname: "status",
+					// 	options: ["Present", "Absent", "Half Day", "Work From Home"],
+					// 	reqd: 1,
+					// },
 					{
 						fieldtype: "Column Break",
 						fieldname: "time_period_column",
@@ -64,6 +73,12 @@ frappe.listview_settings["Attendance"] = {
 						reqd: 1,
 						default: moment().subtract(1, "days").toDate(),
 						onchange: () => me.get_unmarked_days(dialog),
+					},
+					{
+						label: __("Shift"),
+						fieldtype: "Link",
+						fieldname: "shift",
+						options: "Shift Type",
 					},
 					{
 						fieldtype: "Section Break",

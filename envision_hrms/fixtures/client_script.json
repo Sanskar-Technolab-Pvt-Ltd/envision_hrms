@@ -9,5 +9,16 @@
   "name": "Hide Create Payment Button To Payment Request",
   "script": "frappe.ui.form.on('Payment Request', {\n\tonload(frm) {\n\t\t if(frm.doc.workflow_state !== \"Approved\"){\n\t\t     frm.remove_custom_button('Create Payment Entry');\n\t\t }\n\t}\n});",
   "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Attendance",
+  "enabled": 1,
+  "modified": "2025-08-05 14:54:21.728059",
+  "module": "Envision HRMS",
+  "name": "Add Breadcrumb",
+  "script": "frappe.ui.form.on('Attendance', {\n\tonload(frm) {\n\t\tfrappe.breadcrumbs.add(\"Shift & Attendance\", \"Attendance\");\t\n\t}\n});",
+  "view": "Form"
  }
 ]

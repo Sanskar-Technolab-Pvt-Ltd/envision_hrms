@@ -9,7 +9,7 @@
  "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "letter_head": "Print Format LetterHead",
+ "letter_head": "",
  "letterhead": null,
  "modified": "2025-06-17 13:01:22.597992",
  "modified_by": "Administrator",
@@ -17,7 +17,7 @@
  "name": "Monthly Attendance Sheet Summary",
  "owner": "Administrator",
  "prepared_report": 0,
- "ref_doctype": "Salary Slip",
+ "ref_doctype": "Employee",
  "report_name": "Monthly Attendance Sheet Summary",
  "report_type": "Script Report",
  "roles": [

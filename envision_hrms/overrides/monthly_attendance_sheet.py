@@ -57,7 +57,7 @@ def get_employee_related_details_override(filters):
             Employee.holiday_list,
             Employee.employment_type,  # Add employment_type field
         )
-        .where(Employee.company.isin(filters.companies))
+        .where(Employee.company.isin(filters.companies) & (Employee.status == "Active"))
     )
 
     if filters.employee:
