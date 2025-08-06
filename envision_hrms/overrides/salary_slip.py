@@ -111,7 +111,7 @@ def custom_get_working_days_details(self, lwp=None, for_preview=0):
 					payroll_settings.include_holidays_in_total_working_days, holidays
 				)
 				half_absent_days = self.get_half_absent_days(
-					payroll_settings.include_holidays_in_total_working_days,
+					# payroll_settings.include_holidays_in_total_working_days,
 					consider_marked_attendance_on_holidays,
 					holidays,
 				)
