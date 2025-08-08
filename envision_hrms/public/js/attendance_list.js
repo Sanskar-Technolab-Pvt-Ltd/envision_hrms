@@ -55,13 +55,13 @@ frappe.listview_settings["Attendance"] = {
 						default: first_day_of_month.toDate(),
 						onchange: () => me.get_unmarked_days(dialog),
 					},
-					// {
-					// 	label: __("Status"),
-					// 	fieldtype: "Select",
-					// 	fieldname: "status",
-					// 	options: ["Present", "Absent", "Half Day", "Work From Home"],
-					// 	reqd: 1,
-					// },
+					{
+						label: __("Status"),
+						fieldtype: "Select",
+						fieldname: "status",
+						options: ["Present", "Absent", "Half Day", "Work From Home", "Week Off"],
+						reqd: 1,
+					},
 					{
 						fieldtype: "Column Break",
 						fieldname: "time_period_column",
@@ -79,19 +79,20 @@ frappe.listview_settings["Attendance"] = {
 						fieldtype: "Link",
 						fieldname: "shift",
 						options: "Shift Type",
+						reqd: 1,
 					},
 					{
 						fieldtype: "Section Break",
 						fieldname: "days_section",
 						hidden: 1,
 					},
-					{
-						label: __("Status"),
-						fieldtype: "Select",
-						fieldname: "status",
-						options: ["Present", "Absent", "Half Day", "Work From Home"],
-						reqd: 1,
-					},
+					// {
+					// 	label: __("Status"),
+					// 	fieldtype: "Select",
+					// 	fieldname: "status",
+					// 	options: ["Present", "Absent", "Half Day", "Work From Home"],
+					// 	reqd: 1,
+					// },
 					{
 						label: __("Exclude Holidays"),
 						fieldtype: "Check",

@@ -26,7 +26,11 @@ app_license = "mit"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/envision_hrms/css/envision_hrms.css"
-app_include_js = ["/assets/envision_hrms/js/common.js", "/assets/envision_hrms/js/monthly_attendance_sheet.js"]
+app_include_js = [
+                    "/assets/envision_hrms/js/common.js", 
+                    "/assets/envision_hrms/js/monthly_attendance_sheet.js", 
+                    "/assets/envision_hrms/js/salary_register.js"
+                ]
 
 # Migration
 # ------------

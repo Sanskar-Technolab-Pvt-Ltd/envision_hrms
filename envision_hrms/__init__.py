@@ -1,33 +1,35 @@
 __version__ = "0.0.1"
 
 import hrms.hr.doctype.employee_checkin.employee_checkin
-import envision_hrms.overrides.employee_checkin
+from envision_hrms.overrides.employee_checkin import (
+    add_log_based_on_employee_field, custom_validate_duplicate_log)
 
 import hrms.hr.doctype.upload_attendance.upload_attendance
 
 # ----------------------Override add checkin logs method to commit database----------------------------
 
 hrms.hr.doctype.employee_checkin.employee_checkin.add_log_based_on_employee_field = (
-    envision_hrms.overrides.employee_checkin.add_log_based_on_employee_field
+    add_log_based_on_employee_field
 )
 
 # ----------------------Override validate duplicate log to add validation for log type----------------------------
 
 hrms.hr.doctype.employee_checkin.employee_checkin.EmployeeCheckin.validate_duplicate_log = (
-    envision_hrms.overrides.employee_checkin.custom_validate_duplicate_log
+    custom_validate_duplicate_log
 )
 
 import hrms.hr.doctype.attendance.attendance
-import envision_hrms.overrides.custom_upload_attendance
+from envision_hrms.overrides.custom_upload_attendance import (
+    custom_validate, add_header)
 
 # ----------------------Override attendance validate function----------------------------
 
-hrms.hr.doctype.attendance.attendance.Attendance.validate = envision_hrms.overrides.custom_upload_attendance.custom_validate
+hrms.hr.doctype.attendance.attendance.Attendance.validate = custom_validate
 
 # ----------------------Override upload attendance template header format----------------------------
 
 hrms.hr.doctype.upload_attendance.upload_attendance.add_header = (
-    envision_hrms.overrides.custom_upload_attendance.add_header
+    add_header
 )
 
 
@@ -84,3 +86,11 @@ monthly_attendance_sheet.get_holiday_status = get_holiday_status_override
 monthly_attendance_sheet.get_attendance_status_for_detailed_view = get_attendance_status_for_detailed_view_override
 monthly_attendance_sheet.get_attendance_map = get_attendance_map_override
 monthly_attendance_sheet.get_attendance_records = get_attendance_records_override
+
+
+# --------------------Overrided methods for salary register----------------------
+
+from hrms.payroll.report.salary_register import salary_register
+from envision_hrms.overrides.salary_register import get_salary_slips_override
+
+salary_register.get_salary_slips = get_salary_slips_override
