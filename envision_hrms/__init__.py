@@ -88,9 +88,9 @@ monthly_attendance_sheet.get_attendance_map = get_attendance_map_override
 monthly_attendance_sheet.get_attendance_records = get_attendance_records_override
 
 
-# --------------------Overrided methods for salary register----------------------
+# # --------------------Overrided methods for salary register----------------------
 
-from hrms.payroll.report.salary_register import salary_register
-from envision_hrms.overrides.salary_register import get_salary_slips_override
+# from hrms.payroll.report.salary_register import salary_register
+# from envision_hrms.overrides.salary_register import get_salary_slips_override
 
-salary_register.get_salary_slips = get_salary_slips_override
+# salary_register.get_salary_slips = get_salary_slips_override
