@@ -7,9 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "document",
+  "status",
   "received",
   "column_break_xgay",
-  "attach_document"
+  "attach_document",
+  "remarks"
  ],
  "fields": [
   {
@@ -36,17 +38,32 @@
    "fieldtype": "Attach",
    "in_list_view": 1,
    "label": "Attach Document"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "\nYes\nNo\nNot Applicable"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Remarks"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-11-29 11:29:41.300268",
+ "modified": "2025-08-12 11:25:54.272414",
  "modified_by": "Administrator",
  "module": "Envision HRMS",
  "name": "Employee Document Checklist",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
