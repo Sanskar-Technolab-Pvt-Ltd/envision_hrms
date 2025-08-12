@@ -1,0 +1,29 @@
+{
+ "add_total_row": 1,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2025-08-12 11:30:51.432186",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "",
+ "letterhead": null,
+ "modified": "2025-08-12 11:30:51.432186",
+ "modified_by": "Administrator",
+ "module": "Envision HRMS",
+ "name": "Salary Register-Office",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Salary Slip",
+ "report_name": "Salary Register-Office",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "HR Manager"
+  }
+ ],
+ "timeout": 0
+}
