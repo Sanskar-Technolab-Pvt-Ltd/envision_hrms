@@ -88,18 +88,18 @@ monthly_attendance_sheet.get_attendance_map = get_attendance_map_override
 monthly_attendance_sheet.get_attendance_records = get_attendance_records_override
 
 # --------------------Overrided methods for salary register----------------------       
-import frappe
+# import frappe
 
-def override_salary_register():
-    import hrms.payroll.report.salary_register.salary_register as salary_register
-    from envision_hrms.overrides.salary_register import get_salary_slips_override
-    salary_register.get_salary_slips = get_salary_slips_override
+# def override_salary_register():
+#     import hrms.payroll.report.salary_register.salary_register as salary_register
+#     from envision_hrms.overrides.salary_register import get_salary_slips_override
+#     salary_register.get_salary_slips = get_salary_slips_override
 
-# Run only when Frappe is ready
-frappe.ready = override_salary_register
+# # Run only when Frappe is ready
+# frappe.ready = override_salary_register
 
-# from envision_hrms.overrides.salary_register import get_salary_slips_override
-# import hrms.payroll.report.salary_register.salary_register as salary_register
+from envision_hrms.overrides.salary_register import get_salary_slips_override
+import hrms.payroll.report.salary_register.salary_register as salary_register
 
 # def override_salary_register():
 #     salary_register.get_salary_slips = get_salary_slips_override
@@ -107,4 +107,4 @@ frappe.ready = override_salary_register
 # override_salary_register()
 
 
-# hrms.payroll.report.salary_register.salary_register.get_salary_slips = get_salary_slips_override
+salary_register.get_salary_slips = get_salary_slips_override

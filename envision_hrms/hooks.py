@@ -146,6 +146,7 @@ override_doctype_class = {
 	"Attendance Request": "envision_hrms.overrides.attendance_request.AttendanceRequest"
 }
 
+
 # Document Events
 # ---------------
 # Hook on document methods and events
