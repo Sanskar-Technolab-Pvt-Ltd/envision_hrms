@@ -29,7 +29,6 @@ app_license = "mit"
 app_include_js = [
                     "/assets/envision_hrms/js/common.js", 
                     "/assets/envision_hrms/js/monthly_attendance_sheet.js", 
-                    "/assets/envision_hrms/js/salary_register.js", 
                 ]
 
 # Migration

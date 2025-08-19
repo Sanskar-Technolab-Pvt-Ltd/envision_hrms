@@ -18,7 +18,7 @@ frappe.ui.form.on('Payroll Entry', {
                 "branch": frm.doc.branch || ""
             };
 
-            frappe.set_route("query-report", "Salary Register");
+            frappe.set_route("query-report", "Salary Register New");
         }).addClass('btn btn-primary btn-sm primary-action');
     }
 });
