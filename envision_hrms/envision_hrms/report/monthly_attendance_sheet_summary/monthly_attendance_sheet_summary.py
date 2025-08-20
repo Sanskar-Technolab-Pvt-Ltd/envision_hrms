@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 import calendar
-from frappe.utils import add_days, date_diff, flt, getdate
+from frappe.utils import add_days, date_diff, flt, getdate # type: ignore
 
 
 def execute(filters=None):
@@ -193,106 +193,105 @@ def calculate_attendance_data(employee, start_date, end_date):
 
 
 def get_data(filters):
-   conditions = get_conditions(filters)
-  
-   # Get monthly days for the selected month/year
-   monthly_days = get_monthly_days(filters.get("month"), filters.get("year"))
-  
-   # Create start and end dates for the month
-   start_date = None
-   end_date = None
-   if filters.get("month") and filters.get("year"):
-       start_date = f"{filters.get('year')}-{str(filters.get('month')).zfill(2)}-01"
-       end_date = f"{filters.get('year')}-{str(filters.get('month')).zfill(2)}-{monthly_days}"
-  
-   # Get ALL employees first
-   query = """
-       SELECT
-           emp.name as employee,
-           emp.employee_name,
-           emp.department,
-           emp.designation,
-           emp.branch,
-           emp.calender_days,
-           emp.status,
-           CASE
-               WHEN ss.name IS NOT NULL THEN 'Generated'
-               ELSE 'Not Generated'
-           END as salary_slip_status
-       FROM `tabEmployee` emp
-       LEFT JOIN `tabSalary Slip` ss ON emp.name = ss.employee
-           AND ss.docstatus = 1 {salary_slip_conditions}
-       WHERE emp.status = 'Active' {employee_conditions}
-       ORDER BY emp.department, emp.designation, emp.branch, emp.employee_name
-   """
-  
-   # Split conditions for employee and salary slip
-   employee_conditions, salary_slip_conditions = split_conditions(conditions, filters)
-  
-   final_query = query.format(
-       employee_conditions=employee_conditions,
-       salary_slip_conditions=salary_slip_conditions
-   )
-  
-   # Add monthly_days to filters for the query
-   query_filters = dict(filters)
-   query_filters["monthly_days"] = monthly_days
-  
-   employees_data = frappe.db.sql(final_query, query_filters, as_dict=1)
-  
-   # Calculate attendance data for ALL employees (whether salary slip generated or not)
-   for row in employees_data:
-       if start_date and end_date:
-           # Calculate attendance data from attendance records for all employees
-           attendance_data = calculate_attendance_data(row.get('employee'), start_date, end_date)
-          
-           # Update the row with calculated values
-           row['week_off'] = attendance_data['week_off']
-           row['custom_ot_hours'] = attendance_data['custom_ot_hours']
-           row['total_public_holidays'] = attendance_data['total_public_holidays']
-          
-           # Calculate absent days from attendance records
-           absent_days = calculate_absent_days(row.get('employee'), start_date, end_date)
-           row['absent_days'] = absent_days
-          
-           # Calculate LWP from attendance records
-           lwp_days = calculate_lwp_days(row.get('employee'), start_date, end_date)
-           row['leave_without_pay'] = lwp_days
-          
-           # Set total working days
-           row['total_working_days'] = monthly_days
-          
-           # Calculate payment days based on your salary slip logic
-           if row.get('calender_days') and row.get('calender_days') > 0:
-               # Use calendar days if set and employee worked full month
-               row['payment_days'] = flt(row.get('calender_days', 0)) - flt(row['absent_days']) - flt(row['leave_without_pay'])
-           else:
-               # Use total working days minus week off, absent days, and LWP
-               row['payment_days'] = flt(monthly_days) - flt(row['week_off']) - flt(row['absent_days']) - flt(row['leave_without_pay'])
-          
-           # Ensure payment days is not negative
-           if row['payment_days'] < 0:
-               row['payment_days'] = 0
-       else:
-           # If no date filters, set default values
-           row['total_working_days'] = monthly_days
-           row['week_off'] = 0
-           row['leave_without_pay'] = 0
-           row['absent_days'] = 0
-           row['payment_days'] = monthly_days
-           row['custom_ot_hours'] = 0
-           row['total_public_holidays'] = 0
-  
-   # Format float values to 2 decimal places
-   for row in employees_data:
-       float_fields = ['total_working_days', 'week_off', 'leave_without_pay',
-                      'absent_days', 'payment_days', 'custom_ot_hours', 'total_public_holidays']
-      
-       for field in float_fields:
-           if row.get(field) is not None:
-               row[field] = round(float(row[field]), 2)
-  
-   return employees_data
+    conditions = get_conditions(filters)
+    monthly_days = get_monthly_days(filters.get("month"), filters.get("year"))
+
+    start_date = None
+    end_date = None
+    if filters.get("month") and filters.get("year"):
+        start_date = f"{filters.get('year')}-{str(filters.get('month')).zfill(2)}-01"
+        end_date = f"{filters.get('year')}-{str(filters.get('month')).zfill(2)}-{monthly_days}"
+
+    # Get ALL employees first
+    query = """
+        SELECT
+            emp.name as employee,
+            emp.employee_name,
+            emp.department,
+            emp.designation,
+            emp.branch,
+            emp.calender_days,
+            emp.status,
+            CASE
+                WHEN ss.name IS NOT NULL THEN 'Generated'
+                ELSE 'Not Generated'
+            END as salary_slip_status
+        FROM `tabEmployee` emp
+        LEFT JOIN `tabSalary Slip` ss ON emp.name = ss.employee
+            AND ss.docstatus = 1 {salary_slip_conditions}
+        WHERE emp.status = 'Active' {employee_conditions}
+        ORDER BY emp.name ASC
+    """
+
+    employee_conditions, salary_slip_conditions = split_conditions(conditions, filters)
+
+    final_query = query.format(
+        employee_conditions=employee_conditions,
+        salary_slip_conditions=salary_slip_conditions
+    )
+
+    query_filters = dict(filters)
+    query_filters["monthly_days"] = monthly_days
+
+    employees_data = frappe.db.sql(final_query, query_filters, as_dict=1)
+
+    # --- Filter employees who have attendance data in the selected period ---
+    if start_date and end_date:
+        filtered_employees = []
+        for row in employees_data:
+            attendance_count = frappe.db.count(
+                'Attendance',
+                {
+                    'employee': row['employee'],
+                    'attendance_date': ['between', [start_date, end_date]],
+                    'docstatus': 1
+                }
+            )
+            if attendance_count > 0:
+                filtered_employees.append(row)
+        employees_data = filtered_employees
+    # ------------------------------------------------------------------------
+
+    # Calculate attendance data for filtered employees
+    for row in employees_data:
+        if start_date and end_date:
+            attendance_data = calculate_attendance_data(row.get('employee'), start_date, end_date)
+            row['week_off'] = attendance_data['week_off']
+            row['custom_ot_hours'] = attendance_data['custom_ot_hours']
+            row['total_public_holidays'] = attendance_data['total_public_holidays']
+
+            absent_days = calculate_absent_days(row.get('employee'), start_date, end_date)
+            row['absent_days'] = absent_days
+
+            lwp_days = calculate_lwp_days(row.get('employee'), start_date, end_date)
+            row['leave_without_pay'] = lwp_days
+
+            row['total_working_days'] = monthly_days
+
+            if row.get('calender_days') and row.get('calender_days') > 0:
+                row['payment_days'] = flt(row.get('calender_days', 0)) - flt(row['absent_days']) - flt(row['leave_without_pay'])
+            else:
+                row['payment_days'] = flt(monthly_days) - flt(row['week_off']) - flt(row['absent_days']) - flt(row['leave_without_pay'])
+
+            if row['payment_days'] < 0:
+                row['payment_days'] = 0
+        else:
+            row['total_working_days'] = monthly_days
+            row['week_off'] = 0
+            row['leave_without_pay'] = 0
+            row['absent_days'] = 0
+            row['payment_days'] = monthly_days
+            row['custom_ot_hours'] = 0
+            row['total_public_holidays'] = 0
+
+    for row in employees_data:
+        float_fields = ['total_working_days', 'week_off', 'leave_without_pay',
+                       'absent_days', 'payment_days', 'custom_ot_hours', 'total_public_holidays']
+        for field in float_fields:
+            if row.get(field) is not None:
+                row[field] = round(float(row[field]), 2)
+
+    return employees_data
 
 
 def get_conditions(filters):
@@ -346,7 +345,7 @@ def get_company_descendants(company):
    """Get all descendant companies including the parent company"""
    try:
        # Try using frappe's nested set utility
-       from frappe.utils.nestedset import get_descendants_of
+       from frappe.utils.nestedset import get_descendants_of # type: ignore
        companies = get_descendants_of("Company", company)
        companies.append(company)
        return companies
