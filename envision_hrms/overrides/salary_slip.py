@@ -123,7 +123,7 @@ def custom_get_working_days_details(self, lwp=None, for_preview=0):
 			self.payment_days = 0
 
 	#Use calendar_days if full-month attendance and calendar_days is set
-	if self.calendar_days and self.start_date and self.end_date and not str(self.employee).startswith("C1-EMP-"):
+	if self.calendar_days and self.start_date and self.end_date and not str(self.employee).startswith("C"):
 		month_start = getdate(self.start_date).replace(day=1)
 		month_end = getdate(add_days(self.start_date, 32)).replace(day=1) - timedelta(days=1)
 	
