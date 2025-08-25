@@ -1,8 +1,8 @@
 import frappe
 from frappe import _
-from frappe.utils import add_days, date_diff, flt, getdate
-from hrms.payroll.doctype.payroll_period.payroll_period import get_payroll_period
-from frappe.utils import cint
+from frappe.utils import add_days, date_diff, flt, getdate # type: ignore
+from hrms.payroll.doctype.payroll_period.payroll_period import get_payroll_period # type: ignore
+from frappe.utils import cint # type: ignore
 from datetime import timedelta
 
 
@@ -152,3 +152,6 @@ def custom_get_working_days_details(self, lwp=None, for_preview=0):
 
 			else:
 				self.payment_days = self.payment_days - flt(self.week_off) - flt(lwp)
+
+	if str(self.employee).startswith("C"):
+		self.payment_days = self.payment_days - flt(self.week_off)
