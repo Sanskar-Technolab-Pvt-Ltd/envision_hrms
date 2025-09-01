@@ -143,6 +143,9 @@ def create_advance_permissions(user, employee_id, selected_doctypes, reports_to)
         frappe.throw("User Permission not found for the given criteria.")
 
 
-
+@frappe.whitelist()
+def get_salary_slip_docstatus(payroll_entry):
+    docstatus = frappe.db.get_value("Salary Slip", {"payroll_entry": payroll_entry}, "docstatus")
+    return docstatus
 
 

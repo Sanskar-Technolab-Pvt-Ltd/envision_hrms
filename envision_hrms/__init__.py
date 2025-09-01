@@ -87,3 +87,13 @@ monthly_attendance_sheet.get_attendance_status_for_detailed_view = get_attendanc
 monthly_attendance_sheet.get_attendance_map = get_attendance_map_override
 monthly_attendance_sheet.get_attendance_records = get_attendance_records_override
 
+
+# ----------------------Compensatory Leave Request validation----------------------------
+
+
+from hrms.payroll.doctype.payroll_entry.payroll_entry import PayrollEntry
+from envision_hrms.overrides.payroll_entry import custom_make_accrual_jv_entry
+
+PayrollEntry.make_accrual_jv_entry = custom_make_accrual_jv_entry
+
+
