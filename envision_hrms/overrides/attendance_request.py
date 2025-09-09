@@ -2,8 +2,9 @@
 # For license information, please see license.txt
 
 
+import datetime
 import frappe
-from frappe import _
+from frappe import _, cint
 from frappe.model.document import Document
 from frappe.utils import add_days, date_diff, format_date, get_link_to_form, getdate
 
@@ -77,7 +78,12 @@ class AttendanceRequest(Document):
 		request_days = date_diff(self.to_date, self.from_date) + 1
 		for day in range(request_days):
 			attendance_date = add_days(self.from_date, day)
-			if self.reason in ["Early Going", "Late Coming", "Missed Punch In", "Missed Punch Out"]:
+
+			# Skip attendance creation if reason is "Off Duty"
+			if self.reason == "Off Duty":
+				continue
+	
+			if self.reason in ["Early Going", "Late Coming", "Missed Punch In", "Missed Punch Out", "On Duty"]:
 				create_checkins(self)
 				attendance_name = self.get_attendance_record(attendance_date)
 				if self.should_mark_attendance(attendance_date):
@@ -120,6 +126,7 @@ class AttendanceRequest(Document):
 			doc.company = self.company
 			doc.attendance_request = self.name
 			doc.status = status
+			doc.custom_purpose = self.custom_purpose
 			doc.insert(ignore_permissions=True)
 			doc.submit()    
 
@@ -248,6 +255,52 @@ def update_attendance_from_checkins(self, attendance_date):
             frappe.utils.get_datetime(out_time) - frappe.utils.get_datetime(in_time)
         ).total_seconds() / 3600
 
+        # Apply shift thresholds for status
+        full_day_threshold = cint(frappe.db.get_value("Shift Type", self.shift, "working_hours_threshold_for_half_day")) or 0
+        half_day_threshold = cint(frappe.db.get_value("Shift Type", self.shift, "working_hours_threshold_for_absent")) or 0
+
+		# Grace periods
+        grace_period_late = cint(frappe.db.get_value("Shift Type", self.shift, "late_entry_grace_period")) or 0
+        grace_period_early = cint(frappe.db.get_value("Shift Type", self.shift, "early_exit_grace_period")) or 0
+        shift_start = frappe.db.get_value("Shift Type", self.shift, "start_time")
+        shift_end = frappe.db.get_value("Shift Type", self.shift, "end_time")
+
+        # Ensure shift_start and shift_end are strings
+        if isinstance(shift_start, datetime.timedelta):
+            shift_start = (datetime.datetime.min + shift_start).time().strftime("%H:%M:%S")
+        if isinstance(shift_end, datetime.timedelta):
+            shift_end = (datetime.datetime.min + shift_end).time().strftime("%H:%M:%S")
+
+        shift_in = frappe.utils.get_datetime(attendance_date.strftime("%Y-%m-%d") + " " + shift_start)
+        shift_out = frappe.utils.get_datetime(attendance_date.strftime("%Y-%m-%d") + " " + shift_end)
+
+        if full_day_threshold and working_hours < full_day_threshold:
+            status = "Half Day"
+        elif half_day_threshold and working_hours < half_day_threshold:
+            status = "Absent"
+        else:
+            status = "Present"
+
+		# Late entry and early exit calculation
+        late_entry = 0
+        early_exit = 0
+        if status != "Half Day" and shift_start and shift_end:
+            # Compare actual IN/OUT with shift times and grace periods
+            actual_in = frappe.utils.get_datetime(in_time)
+            actual_out = frappe.utils.get_datetime(out_time)
+            shift_in = frappe.utils.get_datetime(attendance_date.strftime("%Y-%m-%d") + " " + shift_start)
+            shift_out = frappe.utils.get_datetime(attendance_date.strftime("%Y-%m-%d") + " " + shift_end)
+
+            if (actual_in - shift_in).total_seconds() > grace_period_late * 60:
+                late_entry = 1
+            if (shift_out - actual_out).total_seconds() > grace_period_early * 60:
+                early_exit = 1
+
+        # If half day, always set flags to 0
+        if status == "Half Day":
+            late_entry = 0
+            early_exit = 0
+
         # Get or Create Attendance Record
         attendance_name = self.get_attendance_record(attendance_date)
         if attendance_name:
@@ -256,22 +309,28 @@ def update_attendance_from_checkins(self, attendance_date):
                 "in_time": in_time,
                 "out_time": out_time,
                 "working_hours": working_hours,
-                "status": "Present",
-                "late_entry": 0,
-                "early_exit": 0,
-                "attendance_request": self.name
+                "status": status,
+                "late_entry": late_entry,
+                "early_exit": early_exit,
+                "attendance_request": self.name,
+				"half_day_status": "Absent" if status == "Half Day" else None,
+				"custom_purpose": self.custom_purpose
             })
         else:
             attendance = frappe.new_doc("Attendance")
             attendance.update({
                 "employee": self.employee,
                 "attendance_date": attendance_date,
-                "status": "Present",
-				"shift": self.shift,
+                "status": status,
+                "shift": self.shift,
                 "in_time": in_time,
                 "out_time": out_time,
                 "working_hours": working_hours,
-                "attendance_request": self.name
+				"late_entry": late_entry,
+                "early_exit": early_exit,
+                "attendance_request": self.name,
+				"half_day_status": "Absent" if status == "Half Day" else None,
+				"custom_purpose": self.custom_purpose
             })
             attendance.insert(ignore_permissions=True)
             attendance.submit()
@@ -286,4 +345,81 @@ def update_attendance_from_checkins(self, attendance_date):
     else:
         frappe.msgprint(_("No valid check-in or check-out records found for the date."))
 
+
+
+# @frappe.whitelist()
+# def update_attendance_from_checkins(self, attendance_date):
+#     # Fetch Check-ins for the employee on the attendance date
+#     checkins = frappe.get_all(
+#         "Employee Checkin",
+#         filters={
+#             "employee": self.employee,
+#             "time": ["between", [str(attendance_date) + " 00:00:00", str(attendance_date) + " 23:59:59"]]
+#         },
+#         fields=["name", "time", "log_type"],
+#         order_by="time asc"
+#     )
+
+#     # Separate IN and OUT logs
+#     in_logs = [c for c in checkins if c["log_type"] == "IN"]
+#     out_logs = [c for c in checkins if c["log_type"] == "OUT"]
+
+#     if in_logs and out_logs:
+#         in_time = in_logs[0]["time"]
+#         out_time = out_logs[-1]["time"]  # Latest OUT time
+
+#         # Calculate Working Hours
+#         working_hours = (
+#             frappe.utils.get_datetime(out_time) - frappe.utils.get_datetime(in_time)
+#         ).total_seconds() / 3600
+
+# 		# Apply shift thresholds for status
+# 		full_day_threshold = cint(frappe.db.get_value("Shift Type", self.shift, "working_hours_threshold_for_half_day")) or 0
+
+# 		half_day_threshold = cint(frappe.db.get_value("Shift Type", self.shift, "working_hours_threshold_for_absent")) or 0
+
+# 		if full_day_threshold and working_hours < full_day_threshold:
+#             status = "Half Day"
+#         elif half_day_threshold and working_hours < half_day_threshold:
+#             status = "Absent"
+#         else:
+#             status = "Present"
+
+#         # Get or Create Attendance Record
+#         attendance_name = self.get_attendance_record(attendance_date)
+#         if attendance_name:
+#             attendance = frappe.get_doc("Attendance", attendance_name)
+#             attendance.db_set({
+#                 "in_time": in_time,
+#                 "out_time": out_time,
+#                 "working_hours": working_hours,
+#                 "status": status,
+#                 "late_entry": 0,
+#                 "early_exit": 0,
+#                 "attendance_request": self.name
+#             })
+#         else:
+#             attendance = frappe.new_doc("Attendance")
+#             attendance.update({
+#                 "employee": self.employee,
+#                 "attendance_date": attendance_date,
+#                 "status": status,
+# 				"shift": self.shift,
+#                 "in_time": in_time,
+#                 "out_time": out_time,
+#                 "working_hours": working_hours,
+#                 "attendance_request": self.name
+#             })
+#             attendance.insert(ignore_permissions=True)
+#             attendance.submit()
+#             attendance_name = attendance.name  # capture new name
+
+#         # Link Check-ins to the Attendance record
+#         for checkin in checkins:
+#             frappe.db.set_value("Employee Checkin", checkin["name"], "attendance", attendance_name)
+
+#         frappe.msgprint(_("Updated Attendance ID for {} check-in logs.").format(len(checkins)))
+
+#     else:
+#         frappe.msgprint(_("No valid check-in or check-out records found for the date."))
 

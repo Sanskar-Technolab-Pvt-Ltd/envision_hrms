@@ -130,18 +130,35 @@ def get_monthly_days(month, year):
 
 
 def calculate_absent_days(employee, start_date, end_date):
-   """Calculate absent days from attendance records"""
-   absent_records = frappe.get_list(
-       'Attendance',
-       filters={
-           'employee': employee,
-           'attendance_date': ['between', [start_date, end_date]],
-           'status': 'Absent',
-           'docstatus': 1
-       },
-       fields=['name']
-   )
-   return len(absent_records)
+    """Calculate absent days from attendance records, including half days"""
+    absent_records = frappe.get_list(
+        'Attendance',
+        filters={
+            'employee': employee,
+            'attendance_date': ['between', [start_date, end_date]],
+            'docstatus': 1
+        },
+        fields=['status', 'attendance_date']
+    )
+    total_absent = 0
+    for record in absent_records:
+        if record['status'] == 'Absent':
+            total_absent += 1
+        elif record['status'] in ['Half Day', 'Half Day Present']:
+            # Check if leave is applied for the other half
+            leave_exists = frappe.db.exists(
+                'Leave Application',
+                {
+                    'employee': employee,
+                    'from_date': record['attendance_date'],
+                    'to_date': record['attendance_date'],
+                    'docstatus': 1,
+                    'status': 'Approved'
+                }
+            )
+            if not leave_exists:
+                total_absent += 0.5
+    return total_absent
 
 
 def calculate_lwp_days(employee, start_date, end_date):

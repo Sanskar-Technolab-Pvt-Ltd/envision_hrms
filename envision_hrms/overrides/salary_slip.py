@@ -28,19 +28,21 @@ def custom_get_working_days_details(self, lwp=None, for_preview=0):
         'attendance_date': ['between', [self.start_date, self.end_date]],
         'docstatus': 1
     },
-    fields=['ot_hours', 'public_holiday', "status", 'late_entry']
+    fields=['ot_hours', 'public_holiday', "status", 'late_entry', 'early_exit', 'custom_purpose']
 	)
 
 	total_ot_hours = sum(float(attendance.get('ot_hours', 0)) for attendance in attendance_records)
 	total_ph = sum(float(attendance.get('public_holiday', 0)) for attendance in attendance_records)
-	total_late_entry = sum(float(attendance.get('late_entry', 0)) for attendance in attendance_records)
+	total_late_entry = sum(float(attendance.get('late_entry', 0)) for attendance in attendance_records if attendance.get('custom_purpose') != "Office Reason")
+	total_early_exit = sum(float(attendance.get('early_exit', 0)) for attendance in attendance_records if attendance.get('custom_purpose') != "Office Reason")
+	
 	total_wo = sum(
 		1 if attendance.get('status') == "Week Off" else 
 		(float(attendance.get('status', 0)) if attendance.get('status').replace('.', '', 1).isdigit() else 0)
 		for attendance in attendance_records
 	)
 
-	self.total_late_entry = total_late_entry
+	self.total_late_entry = total_late_entry + total_early_exit
 	self.week_off = total_wo
 	self.custom_ot_hours = total_ot_hours
 	self.total_public_holidays = total_ph
