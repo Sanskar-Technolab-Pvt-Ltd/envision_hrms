@@ -311,6 +311,9 @@ def get_salary_slips(filters, company_currency):
 	if filters.get("account"):
 		query = query.where(payroll_entry.payment_account == filters["account"])
 
+	if filters.get("payroll_entry"):
+		query = query.where(salary_slip.payroll_entry == filters["payroll_entry"])
+
 	salary_slips = query.run(as_dict=1)
 
 	return salary_slips or []

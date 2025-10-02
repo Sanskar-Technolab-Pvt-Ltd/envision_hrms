@@ -23,7 +23,8 @@ frappe.ui.form.on('Payroll Entry', {
                         "department": frm.doc.department || "",
                         "designation": frm.doc.designation || "",
                         "branch": frm.doc.branch || "",
-                        "account": frm.doc.payment_account || ""
+                        "account": frm.doc.payment_account || "",
+                        "payroll_entry": frm.doc.name
                     };
 
                     frappe.set_route("query-report", "Salary Register New");

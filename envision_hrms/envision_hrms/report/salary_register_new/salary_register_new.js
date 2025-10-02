@@ -93,5 +93,12 @@ frappe.query_reports["Salary Register New"] = {
 				};
 			},
 		},
+		{
+			fieldname: "payroll_entry",
+			label: __("Payroll Entry"),
+			fieldtype: "Link",
+			options: "Payroll Entry",
+			width: "100px",
+		},
 	],
 };
