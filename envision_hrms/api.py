@@ -1,5 +1,8 @@
 import frappe
 import json
+from frappe.utils import get_datetime, get_first_day, get_last_day
+from dateutil import relativedelta
+
 
 @frappe.whitelist()
 def get_employee_advance_account(employee, company):
@@ -149,3 +152,50 @@ def get_salary_slip_docstatus(payroll_entry):
     return docstatus
 
 
+def custom_check_effective_date(from_date, today=None, frequency=None, allocate_on_day=None):
+    from_date = get_datetime(from_date)
+    today = frappe.flags.current_date or get_datetime(today)
+    leave_period = get_leave_period_for_date(today)
+    if leave_period:
+        from_date = get_datetime(leave_period.from_date)
+
+    rd = relativedelta.relativedelta(today, from_date)
+    expected_date = {
+        "First Day": get_first_day(today),
+        "Last Day": get_last_day(today),
+        "Date of Joining": from_date,
+    }.get(allocate_on_day)
+    if not expected_date:
+        return False
+
+    if expected_date.day != today.day:
+        return False
+    if frequency == "Monthly":
+        return True
+    elif frequency == "Quarterly" and (rd.months) % 3 == 0:
+        return True
+    elif frequency == "Half-Yearly" and rd.months % 6:
+        return True
+    elif frequency == "Yearly" and rd.months % 12:
+        return True
+
+    return False
+
+
+
+def get_leave_period_for_date(date):
+    leave_period = frappe.get_all(
+        "Leave Period",
+        {
+            "from_date": ["<=", date],
+            "to_date": [">=", date],
+            "is_active": 1,
+        },
+        ["name", "from_date", "to_date"],
+        limit = 1,
+    )
+
+    if leave_period:
+        return leave_period[0]
+
+    return leave_period
