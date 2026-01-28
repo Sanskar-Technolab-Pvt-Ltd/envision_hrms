@@ -97,3 +97,10 @@ from envision_hrms.overrides.payroll_entry import custom_make_accrual_jv_entry
 PayrollEntry.make_accrual_jv_entry = custom_make_accrual_jv_entry
 
 
+#-------------------Quarterly Leave Allocation overriding method -----------------------------------------
+
+from hrms.hr import utils
+from envision_hrms import api
+
+utils.check_effective_date =  api.custom_check_effective_date
+
