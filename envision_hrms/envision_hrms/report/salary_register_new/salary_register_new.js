@@ -100,5 +100,12 @@ frappe.query_reports["Salary Register New"] = {
 			options: "Payroll Entry",
 			width: "100px",
 		},
+		{
+			fieldname: "consolidate_department",
+			label: __("Consolidate Department Wise"),
+			fieldtype: "Check",
+			default: 0,
+			depends_on: "eval:doc.payroll_entry",
+		},
 	],
 };
