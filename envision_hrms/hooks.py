@@ -161,6 +161,15 @@ doc_events = {
     },
     "Appointment Letter": {
         "validate": "envision_hrms.api.calculate_totals"
+    },
+    "Payroll Entry": {
+        "on_update": "envision_hrms.envision_hrms.custom_py.payroll.update_total_net_salary",
+    },
+
+    "Salary Slip": {
+        "on_update": "envision_hrms.envision_hrms.custom_py.payroll.update_total_net_salary",
+        "on_cancel": "envision_hrms.envision_hrms.custom_py.payroll.update_total_net_salary",
+        "after_delete":  "envision_hrms.envision_hrms.custom_py.payroll.update_total_net_salary",
     }
 }
 
