@@ -54,7 +54,7 @@ after_migrate = "envision_hrms.disable_collaps.after_migrate"
 doctype_js = {"Expense Claim" : "public/js/expense_claim.js",
               "Company" : "public/js/company_code.js",
               "Salary Slip":"public/js/salary_slip.js",
-              "Payroll Entry": "public/js/payroll_entry.js"
+              "Payroll Entry": "public/js/payroll_entry.js",
               }
 doctype_list_js = {"Attendance" : "public/js/attendance_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -170,6 +170,11 @@ doc_events = {
         "on_update": "envision_hrms.envision_hrms.custom_py.payroll.update_total_net_salary",
         "on_cancel": "envision_hrms.envision_hrms.custom_py.payroll.update_total_net_salary",
         "after_delete":  "envision_hrms.envision_hrms.custom_py.payroll.update_total_net_salary",
+    },
+    "Salary Structure Assignment": {
+        "on_update": [
+            "envision_hrms.api.handle_salary_structure_assignment_update",
+        ], 
     }
 }
 

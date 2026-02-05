@@ -199,3 +199,35 @@ def get_leave_period_for_date(date):
         return leave_period[0]
 
     return leave_period
+
+# ?
+def handle_salary_structure_assignment_update(doc, method):
+    """Create or update Employee Standard Salary when SSA is saved"""
+    if not doc.employee or not doc.salary_structure:
+        return
+    
+    existing = frappe.db.get_value(
+        "Employee Standard Salary",
+        {"salary_structure_assignment": doc.name},
+        "name"
+    )
+    
+    if existing:
+        scd = frappe.get_doc("Employee Standard Salary", existing)
+        scd.employee = doc.employee
+        scd.salary_structure = doc.salary_structure
+        scd.flags.ignore_validate_update_after_submit = True
+        scd.save(ignore_permissions=True)
+    else:
+        scd = frappe.new_doc("Employee Standard Salary")
+        scd.employee = doc.employee
+        scd.salary_structure_assignment = doc.name
+        scd.salary_structure = doc.salary_structure
+        # Initialize to 0 - on_update will calculate actual values
+        scd.total_gross_pay = 0
+        scd.total_deductions = 0
+        scd.total_employer_contribution = 0
+        scd.total_net_pay = 0
+        scd.ctc = 0
+        scd.insert(ignore_permissions=True
+        )   

@@ -105,7 +105,7 @@ frappe.query_reports["Salary Register New"] = {
 			label: __("Consolidate Department Wise"),
 			fieldtype: "Check",
 			default: 0,
-			depends_on: "eval:doc.payroll_entry",
+			// depends_on: "eval:doc.payroll_entry",
 		},
 	],
 };
