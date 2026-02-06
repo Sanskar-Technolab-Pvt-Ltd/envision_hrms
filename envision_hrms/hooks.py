@@ -175,6 +175,7 @@ doc_events = {
         "on_update": [
             "envision_hrms.api.handle_salary_structure_assignment_update",
         ], 
+        "on_cancel": "envision_hrms.api.handle_salary_structure_assignment_cancel",
     }
 }
 

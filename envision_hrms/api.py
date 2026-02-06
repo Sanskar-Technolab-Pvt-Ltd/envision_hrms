@@ -231,3 +231,11 @@ def handle_salary_structure_assignment_update(doc, method):
         scd.ctc = 0
         scd.insert(ignore_permissions=True
         )   
+    
+# ? Delete Employee Standard Salary on SSA cancel
+def handle_salary_structure_assignment_cancel(doc, method):
+    frappe.db.delete(
+        "Employee Standard Salary",
+        {"salary_structure_assignment": doc.name}
+    )
+    
