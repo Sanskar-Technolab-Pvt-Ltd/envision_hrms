@@ -21,6 +21,11 @@ app_license = "mit"
 # 	}
 # ]
 
+# has_permission = {
+#     "Attendance": "envision_hrms.envision_hrms.custom_py.attendance_leave_validation.freeze_attendance_validation",
+#     "Leave Application": "envision_hrms.envision_hrms.custom_py.attendance_leave_validation.freeze_attendance_validation",
+# }
+
 # Includes in <head>
 # ------------------
 
@@ -176,7 +181,16 @@ doc_events = {
             "envision_hrms.api.handle_salary_structure_assignment_update",
         ], 
         "on_cancel": "envision_hrms.api.handle_salary_structure_assignment_cancel",
-    }
+    },
+    "Attendance": {
+        "validate": "envision_hrms.envision_hrms.custom_py.attendance_leave_validation.freeze_attendance_validation"
+    },
+    "Attendance Request": {
+        "validate": "envision_hrms.envision_hrms.custom_py.attendance_leave_validation.freeze_attendance_validation"
+    },
+    "Leave Application": {
+        "validate": "envision_hrms.envision_hrms.custom_py.attendance_leave_validation.freeze_attendance_validation"
+    },
 }
 
 # Scheduled Tasks
