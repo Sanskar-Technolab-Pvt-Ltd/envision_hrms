@@ -45,15 +45,6 @@ frappe.ui.form.on('Expense Claim', {
     }
 });
 
-frappe.ui.form.on('Expense Claim Detail', {
-    is_purchase_invoice_included: function(frm, cdt, cdn) {
-        let child = locals[cdt][cdn];
-        if (child.is_purchase_invoice_included) {
-            child.sanctioned_amount = 0;
-            frm.fields_dict['expenses'].grid.refresh();
-        }
-    }
-});
 
 let loggedErrors = new Set(); // Reset this in the approval_status function
 function validate_expense_detail(frm, cdt, cdn, totalAmount) {
