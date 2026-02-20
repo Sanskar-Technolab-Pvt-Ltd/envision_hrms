@@ -296,10 +296,18 @@ def update_attendance_from_checkins(self, attendance_date):
             if (shift_out - actual_out).total_seconds() > grace_period_early * 60:
                 early_exit = 1
 
-        # If half day, always set flags to 0
-        if status == "Half Day":
-            late_entry = 0
-            early_exit = 0
+        # # If half day, always set flags to 0
+        # if status == "Half Day":
+        #     late_entry = 0
+        #     early_exit = 0
+        
+        leave_application = self.leave_application or ""
+
+        half_day_status = (
+			"Absent" if status == "Half Day" and not leave_application
+			else "Present" if status == "Half Day"
+			else None
+		)
 
         # Get or Create Attendance Record
         attendance_name = self.get_attendance_record(attendance_date)
@@ -313,7 +321,7 @@ def update_attendance_from_checkins(self, attendance_date):
                 "late_entry": late_entry,
                 "early_exit": early_exit,
                 "attendance_request": self.name,
-				"half_day_status": "Absent" if status == "Half Day" else None,
+				"half_day_status": half_day_status,
 				"custom_purpose": self.custom_purpose
             })
         else:
@@ -329,7 +337,7 @@ def update_attendance_from_checkins(self, attendance_date):
 				"late_entry": late_entry,
                 "early_exit": early_exit,
                 "attendance_request": self.name,
-				"half_day_status": "Absent" if status == "Half Day" else None,
+				"half_day_status": half_day_status,
 				"custom_purpose": self.custom_purpose
             })
             attendance.insert(ignore_permissions=True)
