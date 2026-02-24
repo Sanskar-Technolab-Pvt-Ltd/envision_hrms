@@ -300,18 +300,19 @@ def update_attendance_from_checkins(self, attendance_date):
         # if status == "Half Day":
         #     late_entry = 0
         #     early_exit = 0
-        
-        leave_application = self.leave_application or ""
-
-        half_day_status = (
-			"Absent" if status == "Half Day" and not leave_application
-			else "Present" if status == "Half Day"
-			else None
-		)
-
+        half_day_status = ''
         # Get or Create Attendance Record
         attendance_name = self.get_attendance_record(attendance_date)
-        if attendance_name:
+        
+        if attendance_name:    
+            leave_application = attendance.leave_application or ""
+
+            half_day_status = (
+				"Absent" if status == "Half Day" and not leave_application
+				else "Present" if status == "Half Day"
+				else None
+			)
+        
             attendance = frappe.get_doc("Attendance", attendance_name)
             attendance.db_set({
                 "in_time": in_time,
