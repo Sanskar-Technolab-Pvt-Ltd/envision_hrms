@@ -301,10 +301,13 @@ def update_attendance_from_checkins(self, attendance_date):
         #     late_entry = 0
         #     early_exit = 0
         half_day_status = ''
+        attendance = ''
         # Get or Create Attendance Record
         attendance_name = self.get_attendance_record(attendance_date)
         
         if attendance_name:    
+            attendance = frappe.get_doc("Attendance", attendance_name)
+            
             leave_application = attendance.leave_application or ""
 
             half_day_status = (
@@ -312,8 +315,7 @@ def update_attendance_from_checkins(self, attendance_date):
 				else "Present" if status == "Half Day"
 				else None
 			)
-        
-            attendance = frappe.get_doc("Attendance", attendance_name)
+            
             attendance.db_set({
                 "in_time": in_time,
                 "out_time": out_time,
@@ -338,7 +340,7 @@ def update_attendance_from_checkins(self, attendance_date):
 				"late_entry": late_entry,
                 "early_exit": early_exit,
                 "attendance_request": self.name,
-				"half_day_status": half_day_status,
+				"half_day_status": "Absent" if status == "Half Day" else None,
 				"custom_purpose": self.custom_purpose
             })
             attendance.insert(ignore_permissions=True)
